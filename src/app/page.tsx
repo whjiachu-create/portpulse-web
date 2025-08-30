@@ -1,69 +1,103 @@
+"use client";
+import TrustBar from "@/components/TrustBar";
+import StatsBar from "@/components/StatsBar";
 import Link from "next/link";
+import CorridorChips from "@/components/CorridorChips";
+import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
-async function getStatus(): Promise<"online" | "degraded" | "offline"> {
-  try {
-    const r = await fetch(`${process.env.NEXT_PUBLIC_API_BASE}/v1/health`, { cache: "no-store" });
-    if (!r.ok) return "degraded";
-    return "online";
-  } catch {
-    return "offline";
-  }
-}
+const TrendMini = dynamic(() => import("@/components/TrendMini"), { ssr: false, loading: () => <div className="h-56 rounded-xl border border-slate-200 animate-pulse" /> });
+const D3WorldPortsMap = dynamic(() => import("@/components/D3WorldPortsMap"), { ssr: false, loading: () => <div className="h-[420px] rounded-xl border border-slate-200 animate-pulse" /> });
 
-export default async function Home() {
-  const status = await getStatus();
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.useportpulse.com";
+
+function Hero() {
+  const [status, setStatus] = useState<"online" | "degraded" | "offline">("offline");
+  useEffect(() => {
+    (async () => {
+      try { const r = await fetch(`${API_BASE}/v1/health`, { cache: "no-store" }); setStatus(r.ok ? "online" : "degraded"); }
+      catch { setStatus("offline"); }
+    })();
+  }, []);
+  const pill = status === "online" ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200" : status === "degraded" ? "bg-amber-50 text-amber-800 ring-1 ring-amber-200" : "bg-rose-50 text-rose-700 ring-1 ring-rose-200";
 
   return (
-    <div>
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-b from-blue-50 to-white" />
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:pb-20 sm:pt-20">
-          <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
-              Port Operations API — <span className="text-blue-600">5 分钟跑通，生产可用</span>
-            </h1>
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-sm text-emerald-700 ring-1 ring-emerald-200">
-              Status: {status}
+    <section className="relative min-h-[90vh] overflow-hidden bg-gradient-to-b from-[#0b2533] to-[#142332]">
+      <div className="absolute inset-0 -z-10">
+        <Image src="/images/hero-port.jpg" alt="Port operations background" fill sizes="100vw" className="object-cover opacity-30" priority />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0b2533]/40 to-[#0b2533]" />
+      </div>
+      <div className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+        <div className="max-w-3xl text-white">
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight">Real-time port visibility & predictive insights</h1>
+          <div className="mt-3">
+            <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ${pill}`}>
+              <span className="size-2 rounded-full bg-current/70" /> Status: {status}
             </span>
           </div>
-          <p className="mt-4 max-w-2xl text-gray-600">
-            提供港口趋势（Trend）、停时（Dwell）、快照（Snapshot）与告警（Alerts）。JSON/CSV、一致口径、ETag/304 缓存、向后兼容。
+          <p className="mt-4 text-lg text-slate-200">
+            Unified APIs for congestion, dwell, berth wait and ETA/ETB forecasts — plus corridor snapshots, trends and alerts.
+            Get running in 5 minutes; production-ready in ~30.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="https://docs.useportpulse.com/EXAMPLES.md" className="rounded-md bg-gray-900 px-4 py-2 text-white hover:bg-black">快速开始</a>
-            <a href="https://docs.useportpulse.com/SDK.md" className="rounded-md border px-4 py-2 text-gray-900 hover:bg-gray-50">SDK 示例</a>
-            <Link href="/pricing" className="rounded-md border px-4 py-2 text-gray-900 hover:bg-gray-50">查看定价</Link>
-            <Link href="/contact" className="rounded-md px-4 py-2 text-blue-700 ring-1 ring-blue-200 hover:bg-blue-50">联系销售</Link>
+          <div className="mt-8 flex gap-3">
+            <a href="https://docs.useportpulse.com/EXAMPLES.md" className="rounded-md bg-white/95 text-slate-900 px-4 py-2" target="_blank" rel="noreferrer noopener">Quickstart</a>
+            <Link href="/contact" className="rounded-md border border-white/40 px-4 py-2 text-white">Book a demo</Link>
+          </div>
+          <CorridorChips />
+          <div className="sr-only">
+            {/* small links moved to footer */}
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      <section className="mx-auto grid max-w-6xl gap-6 px-4 py-12 sm:grid-cols-3">
-        {[
-          { title: "稳定接口", desc: "V1 合同冻结，错误体统一，p95 延迟 ≤300ms。" },
-          { title: "可复现口径", desc: "同一口径 JSON/CSV；ETag/304 友好缓存；清晰字段字典。" },
-          { title: "开发者体验", desc: "Quickstart/SDK/Postman，一站式接入，30 分钟完成集成。" },
-        ].map((f) => (
-          <div key={f.title} className="rounded-xl border p-6">
-            <div className="text-lg font-medium">{f.title}</div>
-            <p className="mt-2 text-sm text-gray-600">{f.desc}</p>
-          </div>
-        ))}
-      </section>
+export default function Home() {
+  return (
+    <main>
+      <Hero />
+      <TrustBar />
+      <StatsBar />
 
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="rounded-xl border bg-gray-50 p-6 sm:p-8">
-          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <div>
-              <div className="text-lg font-medium">准备好开始了吗？</div>
-              <p className="mt-1 text-sm text-gray-600">使用演示密钥即可拉起 USLAX 7 天趋势。</p>
+      <section id="product" className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-10">
+        <div className="grid gap-6 md:grid-cols-3">
+          {[
+            ["API-first", "Unified schema, backwards compatible, ETag/304, JSON/CSV."],
+            ["Measurable quality", "Coverage, freshness and p95 latency are monitored."],
+            ["Easy integration", "Run in 5 minutes, production-ready in ~30 minutes."],
+          ].map(([t, d], i) => (
+            <div key={i} className="rounded-xl border bg-white p-6">
+              <div className="text-lg font-semibold">{t}</div>
+              <p className="mt-2 text-gray-600">{d}</p>
             </div>
-            <a href="https://docs.useportpulse.com/EXAMPLES.md" className="rounded-md bg-gray-900 px-4 py-2 text-white hover:bg-black">
-              立即试用
-            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="container mx-auto px-4 pb-4">
+        <div className="rounded-2xl border border-slate-200 p-6">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="font-medium">USLAX · 7-day trend</div>
+            <a className="text-sm text-slate-500 underline underline-offset-4" href="https://docs.useportpulse.com/openapi.json" target="_blank" rel="noreferrer noopener">OpenAPI</a>
+          </div>
+          <TrendMini unlocode="USLAX" days={7} height={224} />
+        </div>
+      </section>
+
+      <D3WorldPortsMap />
+
+      <section className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 pb-16">
+        <div className="rounded-2xl border bg-gradient-to-br from-[#0b2533] to-[#142332] p-8 md:p-12 text-white">
+          <h3 className="text-2xl font-semibold">Ready to start?</h3>
+          <p className="mt-2 text-slate-200">Check the Quickstart or contact sales to book a live demo.</p>
+          <div className="mt-6 flex gap-3">
+            <a href="https://docs.useportpulse.com/EXAMPLES.md" className="rounded-md bg-white text-slate-900 px-4 py-2" target="_blank" rel="noreferrer noopener">Quickstart →</a>
+            <Link href="/contact" className="rounded-md border border-white/40 px-4 py-2 text-white">Contact us</Link>
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }
