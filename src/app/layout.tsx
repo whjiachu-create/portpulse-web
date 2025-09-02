@@ -1,3 +1,25 @@
+
+export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001"),
+  title: { default: "PortPulse — APIs for Port Operations", template: "%s · PortPulse" },
+  description: "Port-level congestion and trade momentum API. Standardized JSON/CSV with freshness SLO.",
+  openGraph: {
+    title: "PortPulse — APIs for Port Operations",
+    description: "Port-level congestion and trade momentum API.",
+    url: "/",
+    siteName: "PortPulse",
+    images: ["/images/hero-port.jpg"],
+    type: "website"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PortPulse",
+    description: "Port-level congestion and trade momentum API.",
+    images: ["/images/hero-port.jpg"]
+  },
+  icons: { icon: "/icon.svg" }
+};
+
 import "./globals.css";
 import type { Metadata } from "next";
 import SiteHeader from "@/components/SiteHeader";

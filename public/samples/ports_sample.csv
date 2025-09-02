@@ -1,7 +1,4 @@
-date,unlocode,metric,value
-2025-08-20,USLAX,congestion_wait_p50,37.5
-2025-08-21,USLAX,congestion_wait_p50,36.9
-2025-08-22,USLAX,congestion_wait_p50,38.2
-2025-08-20,USNYC,congestion_wait_p50,29.4
-2025-08-21,USNYC,congestion_wait_p50,31.1
-2025-08-22,USNYC,congestion_wait_p50,30.7
+unlocode,date,waiting_hours,queue,berth_efficiency,momentum_0_100,delta_mom
+USLAX,2025-08-20,18.2,27,0.64,58,+2
+USNYC,2025-08-20,12.1,19,0.71,61,+1
+SGSIN,2025-08-20,6.8,11,0.79,73,0

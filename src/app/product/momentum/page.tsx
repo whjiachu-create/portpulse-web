@@ -1,83 +1,73 @@
-"use client";
-import React from "react";
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-} from "recharts";
+import Link from "next/link";
+import TrendMini from "@/components/TrendMini";
 
-export const dynamic = "force-static";
+export const metadata = {
+  title: "Trade Momentum API",
+  description:
+    "Throughput proxy & momentum indices (0–100) at port/route level with JSON/CSV schemas and freshness SLO.",
+};
 
-const demo = [
-  { m: "Mar", LAX: 42, SIN: 58 },
-  { m: "Apr", LAX: 48, SIN: 56 },
-  { m: "May", LAX: 53, SIN: 55 },
-  { m: "Jun", LAX: 61, SIN: 52 },
-  { m: "Jul", LAX: 65, SIN: 51 },
-  { m: "Aug", LAX: 62, SIN: 54 },
-];
-
-function Card({title, children}:{title:string; children:React.ReactNode}) {
+export default function MomentumPage() {
   return (
-    <div className="rounded-2xl border border-black/10 bg-white p-5">
-      <h2 className="text-lg font-medium">{title}</h2>
-      <div className="mt-2">{children}</div>
+    <div className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-semibold tracking-tight">Trade Momentum API</h1>
+      <p className="mt-2 text-black/60 max-w-3xl">
+        Port/route-level throughput proxy and momentum indices (0–100), suitable for S&OP and macro signals.
+        Reproducible JSON/CSV, cache-friendly, freshness SLO.
+      </p>
+
+      <section className="mt-8 grid gap-4 md:grid-cols-3">
+        <Card title="USLAX — 14d momentum (demo)">
+          <TrendMini unlocode="USLAX" days={14} />
+        </Card>
+        <Card title="USNYC — 14d momentum (demo)">
+          <TrendMini unlocode="USNYC" days={14} />
+        </Card>
+        <Card title="SGSIN — 14d momentum (demo)">
+          <TrendMini unlocode="SGSIN" days={14} />
+        </Card>
+      </section>
+
+      <h2 className="mt-10 text-xl font-medium">Quickstart</h2>
+      <div className="mt-3 grid gap-3 md:grid-cols-3">
+        <CodeBlock title="curl (JSON)">{`curl -sS -H "X-API-Key: dev_demo_123" \\
+  "https://api.useportpulse.com/v1/ports/USLAX/trend?days=7" | jq .`}</CodeBlock>
+        <CodeBlock title="curl (CSV)">{`curl -fS -H "X-API-Key: dev_demo_123" \\
+  "https://api.useportpulse.com/v1/ports/USLAX/trend?days=7&format=csv" -o trend.csv`}</CodeBlock>
+        <CodeBlock title="JS (fetch)">{`const r = await fetch("/api/pulse/v1/ports/USLAX/trend?days=7", {
+  headers: { "X-API-Key": "dev_demo_123" }
+}); console.log(await r.json());`}</CodeBlock>
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-black/10 bg-white p-4">
+        <h3 className="font-medium">Fields & SLO</h3>
+        <ul className="mt-2 list-disc pl-5 text-black/70 text-sm">
+          <li><code>momentum_0_100</code> – standardized momentum index, 0–100.</li>
+          <li><code>delta_mom</code> – WoW/MoM change signals (normalized).</li>
+          <li>Freshness SLO: key ports ≤ 2h (typical), others ≤ 6h / daily.</li>
+        </ul>
+        <div className="mt-4">
+          <Link href="/docs/api" className="text-[#0B2740] underline">See OpenAPI schemas</Link>
+        </div>
+      </div>
     </div>
   );
 }
 
-export default function MomentumProduct() {
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <h1 className="text-3xl font-semibold tracking-tight">Trade Momentum API</h1>
-      <p className="mt-2 text-black/60 max-w-3xl">
-        Port/route-level throughput proxies and standardized 0–100 momentum indices, with MoM/YoY deltas.
-        API-first JSON/CSV designed for S&OP, network planning and macro signals.
-      </p>
+    <div className="rounded-2xl border border-black/10 bg-white p-4">
+      <h3 className="text-sm font-medium mb-2">{title}</h3>
+      {children}
+    </div>
+  );
+}
 
-      <section className="mt-8 grid gap-4 md:grid-cols-3">
-        <Card title="Index definition (0–100)">
-          <ul className="list-disc pl-5 text-black/70">
-            <li>Momentum: standardized score from throughput proxies and operational signals.</li>
-            <li>Comparable across ports & routes; stable sampling window.</li>
-            <li>Delta fields: <code>mom</code> / <code>yoy</code> included.</li>
-          </ul>
-        </Card>
-        <Card title="Freshness & history">
-          <ul className="list-disc pl-5 text-black/70">
-            <li>Tier-1 ports freshness ≤2h; long tail daily.</li>
-            <li>Historical backfill (rolling 6–12 months as plan).</li>
-          </ul>
-        </Card>
-        <Card title="Quickstart">
-{`          `}<pre className="text-sm overflow-x-auto p-3 rounded-lg bg-black/5">{`BASE=https://api.useportpulse.com
-curl -sS -H "X-API-Key: dev_demo_123" "$BASE/v1/ports/USLAX/trend?days=30" | jq .
-# CSV with ETag/304:
-ET=$(curl -fsSI -H "X-API-Key: dev_demo_123" "$BASE/v1/ports/USLAX/trend?days=30&format=csv" | awk 'BEGIN{IGNORECASE=1}/etag:/{gsub(/\\r|\\n|"/,"");print $2}')
-curl -fsS -H "X-API-Key: dev_demo_123" -H "If-None-Match: \"$ET\"" "$BASE/v1/ports/USLAX/trend?days=30&format=csv" -o uslax.csv`}</pre>
-        </Card>
-      </section>
-
-      <section className="mt-8 grid gap-4">
-        <Card title="Example — momentum comparison (demo data)">
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={demo} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="m" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Line type="monotone" dataKey="LAX" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="SIN" strokeWidth={2} dot={false} />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-          <p className="text-black/60 text-sm mt-2">For live data use the API endpoints; this chart uses demo values.</p>
-        </Card>
-      </section>
-
-      <div className="mt-8 flex gap-3">
-        <a href="/docs/examples" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Run examples</a>
-        <a href="/coverage" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">See coverage</a>
-      </div>
+function CodeBlock({ title, children }: { title: string; children: string }) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-white p-4">
+      <div className="text-sm font-medium mb-2">{title}</div>
+      <pre className="text-xs whitespace-pre-wrap">{children}</pre>
     </div>
   );
 }

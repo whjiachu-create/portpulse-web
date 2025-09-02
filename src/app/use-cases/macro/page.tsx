@@ -1,41 +1,60 @@
-export const dynamic = "force-static";
-export default function MacroUseCase() {
+import Link from "next/link";
+
+export const metadata = {
+  title: "Macro & Quant (Buy-side)",
+  description: "Port throughput proxies and momentum indices as high-frequency logistics cycle signals.",
+};
+
+export default function Page() {
   return (
-    <div className="container mx-auto px-4 py-12 md:py-16">
-      <h1 className="text-3xl font-semibold tracking-tight">Macro & Quant</h1>
-      <p className="mt-2 text-black/60 max-w-3xl">
-        Use port-level throughput proxies and momentum indices as early trade signals.
-        Data comes in standardized JSON/CSV with caching guidance for stable backfills.
-      </p>
-      <section className="mt-8 grid gap-4">
-        <Card title="Pain points">
-          <ul className="list-disc pl-5 text-black/70">
-            <li>Official macro indicators are lagging.</li>
-            <li>Heterogeneous sources and unstable definitions across regions.</li>
-          </ul>
-        </Card>
-        <Card title="How we help">
-          <ul className="list-disc pl-5 text-black/70">
-            <li>Standardized 0–100 momentum with MoM/YoY deltas.</li>
-            <li>Route/port-level throughput proxies for cycle turning points.</li>
-          </ul>
-        </Card>
-        <Card title="Implementation">
-          <ul className="list-disc pl-5 text-black/70">
-            <li>CSV/JSON endpoints; ETag/304 for caching.</li>
-            <li>Freshness SLO tiers; stable sampling windows for backtest.</li>
-          </ul>
-        </Card>
+    <div className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-semibold tracking-tight">Macro & Quant (Buy-side)</h1>
+
+      <section className="mt-4 grid gap-4 md:grid-cols-2">
+        <Block title="Pain points">
+          <ul className="list-disc pl-5 text-sm text-black/70"><li>Traditional macro indicators are lagging</li><li>Hard to normalize ports across regions</li></ul>
+        </Block>
+        <Block title="How we help">
+          <ul className="list-disc pl-5 text-sm text-black/70"><li>Standardized indices for cross-region comparison</li><li>Programmatic access with rate limits and caching</li></ul>
+        </Block>
       </section>
+
+      <section className="mt-6 grid gap-4 md:grid-cols-2">
+        <Block title="Metrics you get">
+          <ul className="list-disc pl-5 text-sm text-black/70">
+            <li>Congestion (waiting hours, queue length, berth efficiency)</li>
+            <li>Throughput proxy and momentum (0–100) with deltas</li>
+            <li>Snapshots, trends, and alerts (webhook/email/Slack)</li>
+          </ul>
+        </Block>
+        <Block title="Implementation">
+          <ul className="list-disc pl-5 text-sm text-black/70">
+            <li>API-first, JSON/CSV; copy-paste Quickstart in minutes</li>
+            <li>Embed into TMS/ERP/BI; caching and retry friendly</li>
+            <li>Typical onboarding: 2–4 weeks for new ports</li>
+          </ul>
+        </Block>
+      </section>
+
+      <section className="mt-6">
+        <Block title="Expected outcomes">
+          <ul className="list-disc pl-5 text-sm text-black/70"><li>More robust backtests and nowcasts</li><li>Actionable risk signals from port-level flows</li></ul>
+        </Block>
+      </section>
+
       <div className="mt-8 flex gap-3">
-        <a href="/docs/examples" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Run a demo</a>
-        <a href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Talk to us</a>
+        <Link href="/pricing" className="rounded-xl bg-black text-white px-5 py-2 text-sm hover:opacity-90">Start evaluation</Link>
+        <Link href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 text-sm hover:bg-black/5">Book a call</Link>
       </div>
     </div>
   );
 }
-function Card({title, children}:{title:string; children:React.ReactNode}) {
-  return <div className="rounded-2xl border border-black/10 bg-white p-5">
-    <h2 className="text-lg font-medium">{title}</h2><div className="mt-2">{children}</div>
-  </div>;
+
+function Block({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-white p-4">
+      <div className="text-sm font-medium mb-2">{title}</div>
+      <div>{children}</div>
+    </div>
+  );
 }
