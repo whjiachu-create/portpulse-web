@@ -1,0 +1,6 @@
+src/app/product/congestion/page.tsx(9,20): error TS2322: Type '{ title: string; unlocode: string; }' is not assignable to type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+src/app/product/congestion/page.tsx(10,20): error TS2322: Type '{ title: string; unlocode: string; }' is not assignable to type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+src/app/product/congestion/page.tsx(11,20): error TS2322: Type '{ title: string; unlocode: string; }' is not assignable to type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.

@@ -1,0 +1,25 @@
+
+> portpulse-web@0.1.0 build
+> next build --turbopack
+
+   ▲ Next.js 15.5.2 (Turbopack)
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Finished writing to disk in 28ms
+ ✓ Compiled successfully in 2.3s
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/app/product/congestion/page.tsx:9:20
+Type error: Type '{ title: string; unlocode: string; }' is not assignable to type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { unlocode: string; days?: number | undefined; height?: number | undefined; }'.
+
+[0m [90m  7 |[39m       [33m<[39m[33mp[39m className[33m=[39m[32m"mt-2 text-black/60 max-w-3xl"[39m[33m>[39m[33mNormalize[39m waiting time and operational flow metrics across regions[33m.[39m [33mOne[39m schema[33m,[39m consistent definitions[33m.[39m[33m<[39m[33m/[39m[33mp[39m[33m>[39m
+ [90m  8 |[39m       [33m<[39m[33msection[39m className[33m=[39m[32m"mt-8 grid gap-4 md:grid-cols-3"[39m[33m>[39m
+[31m[1m>[22m[39m[90m  9 |[39m         [33m<[39m[33mTrendMini[39m title[33m=[39m[32m"USLAX — 14d dwell"[39m unlocode[33m=[39m[32m"USLAX"[39m [33m/[39m[33m>[39m
+ [90m    |[39m                    [31m[1m^[22m[39m
+ [90m 10 |[39m         [33m<[39m[33mTrendMini[39m title[33m=[39m[32m"USNYC — 14d dwell"[39m unlocode[33m=[39m[32m"USNYC"[39m [33m/[39m[33m>[39m
+ [90m 11 |[39m         [33m<[39m[33mTrendMini[39m title[33m=[39m[32m"SGSIN — 14d dwell"[39m unlocode[33m=[39m[32m"SGSIN"[39m [33m/[39m[33m>[39m
+ [90m 12 |[39m       [33m<[39m[33m/[39m[33msection[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

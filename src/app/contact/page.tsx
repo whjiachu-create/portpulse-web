@@ -1,10 +1,20 @@
 /* Contact page with business-email validation, prefill from query, JSON copy, and mailto fallback */
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { isBusinessEmail } from "@/lib/isBusinessEmail";
 
+export const dynamic = "force-dynamic";
+
 export default function ContactPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto px-4 py-12 md:py-16">Loading…</div>}>
+      <ContactForm />
+    </Suspense>
+  );
+}
+
+function ContactForm() {
   const params = useSearchParams();
   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
   const [error, setError] = useState<string>("");
@@ -32,16 +42,9 @@ ${JSON.stringify(form, null, 2)}`;
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setOk(null);
-    if (!isBusinessEmail(form.email)) {
-      setError("请使用工作邮箱（非公共邮箱，如 gmail/outlook/yahoo 等）");
-      return;
-    }
+    if (!isBusinessEmail(form.email)) { setError("请使用工作邮箱（非公共邮箱，如 gmail/outlook/yahoo 等）"); return; }
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
+      const res = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       if (!res.ok) throw new Error(String(res.status));
       setOk(true);
     } catch {
@@ -70,14 +73,11 @@ ${JSON.stringify(form, null, 2)}`;
         </Field>
         <Field label="Message">
           <textarea value={form.message} onChange={e=>setForm(s=>({...s, message:e.target.value}))}
-            rows={5}
-            className="w-full rounded-xl border border-black/10 px-3 py-2 outline-none focus:ring-2 ring-[#26B1FF]" />
+            rows={5} className="w-full rounded-xl border border-black/10 px-3 py-2 outline-none focus:ring-2 ring-[#26B1FF]" />
         </Field>
         <div className="flex gap-2">
           <button type="submit" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Send</button>
-          <button type="button"
-            onClick={()=>navigator.clipboard.writeText(json)}
-            className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Copy JSON</button>
+          <button type="button" onClick={()=>navigator.clipboard.writeText(json)} className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Copy JSON</button>
           <a href={mailto} className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Email instead</a>
         </div>
         {ok===true && <p className="text-sm text-green-600">Submitted. We’ll be in touch.</p>}
@@ -87,10 +87,5 @@ ${JSON.stringify(form, null, 2)}`;
 }
 
 function Field({label, children}:{label:string; children:React.ReactNode}) {
-  return (
-    <label className="grid gap-1">
-      <span className="text-sm text-black/70">{label}</span>
-      {children}
-    </label>
-  );
+  return <label className="grid gap-1"><span className="text-sm text-black/70">{label}</span>{children}</label>;
 }
