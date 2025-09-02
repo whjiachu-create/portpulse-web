@@ -14,8 +14,6 @@ import { feature } from "topojson-client";
 import type { Feature, FeatureCollection, Geometry, GeoJsonProperties } from "geojson";
 import type { Topology, GeometryCollection } from "topojson-specification";
 
-import CoverageStrip from "@/components/CoverageStrip";
-
 /** ---------- shared types ---------- */
 type Pt = { ts: string | number; v: number };
 
@@ -515,8 +513,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    
-<div className="mt-12"><CoverageStrip /></div>
-</main>
+    </main>
   );
 }

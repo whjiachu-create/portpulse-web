@@ -1,32 +1,60 @@
 export const dynamic = "force-static";
-export default function MethodsPage() {
+
+function Section({title, children}:{title:string; children:React.ReactNode}) {
+  return (
+    <section className="mt-8">
+      <h2 className="text-xl font-medium">{title}</h2>
+      <div className="mt-2 text-black/70">{children}</div>
+    </section>
+  );
+}
+
+export default function Methods() {
   return (
     <div className="container mx-auto px-4 py-12 md:py-16">
       <h1 className="text-3xl font-semibold tracking-tight">Data & Methods</h1>
-      <p className="mt-2 text-black/60 max-w-3xl">How we construct congestion, throughput proxies and momentum indices — inputs, normalization and quality controls.</p>
-      <section className="mt-8 grid gap-4">
-        <Card title="Inputs"><ul className="mt-2 list-disc pl-5 text-black/70">
-          <li>AIS movement & port call events</li><li>Schedules and public statistics</li><li>Advisories and disruptions where applicable</li>
-        </ul></Card>
-        <Card title="Normalization"><ul className="mt-2 list-disc pl-5 text-black/70">
-          <li>Port geometry: anchorage/berth/basin mapping layers</li><li>Dedup & noise removal; timezone/daily cut-off alignment</li><li>Comparable definitions across regions</li>
-        </ul></Card>
-        <Card title="Indices"><ul className="mt-2 list-disc pl-5 text-black/70">
-          <li><strong>Congestion</strong>: waiting time, queue length, berth efficiency</li>
-          <li><strong>Throughput proxy</strong>: port/route level activity proxies</li>
-          <li><strong>Momentum</strong>: standardized 0–100 with MoM/YoY deltas</li>
-        </ul></Card>
-        <Card title="SLO & Quality"><ul className="mt-2 list-disc pl-5 text-black/70">
-          <li>Freshness tiers: ≤2h (tier-1), ≤6h (tier-2), daily (long tail)</li><li>Backfill and consistency checks with sampling windows</li>
-        </ul></Card>
-      </section>
-      <div className="mt-8 flex gap-3">
-        <a href="/docs/api" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Read API</a>
-        <a href="/docs/examples" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Quickstart</a>
-      </div>
+      <p className="mt-2 text-black/60 max-w-3xl">
+        Overview of inputs, cleaning & standardization, index construction, and freshness SLO. A sampling CSV is provided for evaluation.
+      </p>
+
+      <Section title="Inputs">
+        <ul className="list-disc pl-5">
+          <li>AIS and port call signals</li>
+          <li>Schedules and public statistics</li>
+          <li>Notices / weather / channel events</li>
+        </ul>
+      </Section>
+
+      <Section title="Cleaning & standardization">
+        <ul className="list-disc pl-5">
+          <li>Definition alignment (anchorage / berth / yard)</li>
+          <li>Anomaly & drift handling; geo matching (multi-level areas)</li>
+          <li>Consistent units and time-bucketing</li>
+        </ul>
+      </Section>
+
+      <Section title="Indices">
+        <ul className="list-disc pl-5">
+          <li><b>Congestion</b>: waiting/queue/efficiency composites</li>
+          <li><b>Throughput proxy</b>: operational flow proxy with calibration</li>
+          <li><b>Momentum (0–100)</b> with MoM/YoY deltas</li>
+        </ul>
+      </Section>
+
+      <Section title="Quality & SLO">
+        <ul className="list-disc pl-5">
+          <li>Freshness: Tier-1 ≤2h; Tier-2 ≤6h; long tail daily</li>
+          <li>Latency p95 ≤ 300ms (typical)</li>
+          <li>Sampling windows documented for backtests</li>
+        </ul>
+      </Section>
+
+      <Section title="Sampling CSV">
+        <p>
+          Download a small anonymized sample:{" "}
+          <a className="underline" href="/samples/ports_sample.csv" download>ports_sample.csv</a>
+        </p>
+      </Section>
     </div>
   );
-}
-function Card({title, children}:{title:string; children:React.ReactNode}) {
-  return <div className="rounded-2xl border border-black/10 bg-white p-5"><h2 className="text-lg font-medium">{title}</h2><div className="mt-2">{children}</div></div>;
 }
