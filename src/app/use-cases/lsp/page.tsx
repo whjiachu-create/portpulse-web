@@ -15,7 +15,7 @@ export default function Page() {
           <ul className="list-disc pl-5 text-sm text-black/70"><li>Mainline/feeder volatility hurts allocation and cut-offs</li><li>Trucking/yard planning is reactive</li><li>Carrier schedule drift is hard to quantify across regions</li></ul>
         </Block>
         <Block title="How we help">
-          <ul className="list-disc pl-5 text-sm text-black/70"><li>Weekly network view of route options with congestion & momentum</li><li>Trigger alerts when waiting > p90 or momentum drops</li><li>Compare alternative POL/POD before booking</li></ul>
+          <ul className="list-disc pl-5 text-sm text-black/70"><li>Weekly network view of route options with congestion & momentum</li><li>Trigger alerts when waiting &gt; p90 or momentum drops</li><li>Compare alternative POL/POD before booking</li></ul>
         </Block>
       </section>
 
