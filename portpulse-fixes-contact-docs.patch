@@ -1,0 +1,24 @@
+diff --git a/src/app/docs/api/page.tsx b/src/app/docs/api/page.tsx
+index 3c3c3c3..4d4d4d4 100644
+--- a/src/app/docs/api/page.tsx
++++ b/src/app/docs/api/page.tsx
+@@ -1,4 +1,5 @@
+-"use client";
++/* eslint-disable @typescript-eslint/no-namespace */
++"use client";
+ import Script from "next/script";
+ import type { DetailedHTMLProps, HTMLAttributes } from "react";
+
+diff --git a/src/app/contact/page.tsx b/src/app/contact/page.tsx
+index 1111111..2222222 100644
+--- a/src/app/contact/page.tsx
++++ b/src/app/contact/page.tsx
+@@ -3,7 +3,7 @@
+ "use client";
+ import { useEffect, useState } from "react";
+ import { useSearchParams } from "next/navigation";
+-import isBusinessEmail from "@/lib/isBusinessEmail";
++import { isBusinessEmail } from "@/lib/isBusinessEmail";
+
+ export default function ContactPage() {
+   const params = useSearchParams();
