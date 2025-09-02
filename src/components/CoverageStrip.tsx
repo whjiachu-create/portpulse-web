@@ -1,4 +1,5 @@
 import { PORTS_COVERAGE, regions } from "@/data/portsCoverage";
+
 export default function CoverageStrip() {
   const live = PORTS_COVERAGE.filter(p=>p.status==="Live").length;
   const byRegion = regions.map(r => ({
@@ -12,10 +13,12 @@ export default function CoverageStrip() {
           <p className="text-black/70 mt-1">
             PortPulse 现已覆盖 <strong>{live}+</strong> 重点港口。更多港口可按需新增，通常 <strong>2–4 周</strong> 完成接入与验收。
           </p>
-          <p className="text-black/50 text-sm mt-1">新增港口遵循相同 schema 与 SLO，确保横向可比。</p>
+          <p className="text-black/50 text-sm mt-1">新增港口遵循相同指标定义与 SLO，确保横向可比。</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          {byRegion.map(x => <span key={x.id} className="px-3 py-1.5 rounded-full bg-black/5 text-sm">{x.name} {x.count}</span>)}
+          {byRegion.map(x => (
+            <span key={x.id} className="px-3 py-1.5 rounded-full bg-black/5 text-sm">{x.name} {x.count}</span>
+          ))}
         </div>
         <div className="flex gap-2">
           <a href="/coverage" className="rounded-xl bg-[#0B2740] text-white px-4 py-2 hover:opacity-90 transition">查看完整清单</a>
