@@ -1,9 +1,10 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
 import Solutions from "@/components/Solutions";
 import TrendMini from "@/components/TrendMini";
 import WorldMiniMap from "@/components/WorldMiniMap";
 import CoverageStrip from "@/components/CoverageStrip";
-import ports from "@/data/portsCoverage";
+import { ports } from "@/data/portsCoverage";
 
 export const dynamic = "force-static";
 
