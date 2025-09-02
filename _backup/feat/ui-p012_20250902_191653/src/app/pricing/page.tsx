@@ -159,19 +159,6 @@ function Faq({ q, a }: { q: string; a: string }) {
     <div className="rounded-xl border border-black/10 bg-white p-4">
       <div className="text-sm font-medium">{q}</div>
       <div className="text-sm text-black/70 mt-1">{a}</div>
-    
-      <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify({
-          "@context":"https://schema.org",
-          "@type":"Product",
-          name:"PortPulse APIs",
-          description:"Port-level congestion and trade momentum APIs with clear limits and simple upgrades.",
-          offers:[
-            {"@type":"Offer","name":"Lite","price":"199","priceCurrency":"USD"},
-            {"@type":"Offer","name":"Starter","price":"399","priceCurrency":"USD"},
-            {"@type":"Offer","name":"Pro","price":"899","priceCurrency":"USD"}
-          ]
-        })
-      }} />
-    </div>); }
-    
+    </div>
+  );
+}

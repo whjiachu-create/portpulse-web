@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "Logistics Service Providers (3PL/Forwarders)",
-  description: "Stabilize network planning with port-level congestion & momentum signals.",
+  description: "Stabilize network planning with port-level congestion &amp; momentum signals.",
 };
 
 export default function Page() {
@@ -15,7 +15,7 @@ export default function Page() {
           <ul className="list-disc pl-5 text-sm text-black/70"><li>Mainline/feeder volatility hurts allocation and cut-offs</li><li>Trucking/yard planning is reactive</li><li>Carrier schedule drift is hard to quantify across regions</li></ul>
         </Block>
         <Block title="How we help">
-          <ul className="list-disc pl-5 text-sm text-black/70"><li>Weekly network view of route options with congestion & momentum</li><li>Trigger alerts when waiting &gt; p90 or momentum drops</li><li>Compare alternative POL/POD before booking</li></ul>
+          <ul className="list-disc pl-5 text-sm text-black/70"><li>Weekly network view of route options with congestion &amp; momentum</li><li>Trigger alerts when waiting &gt; p90 or momentum drops</li><li>Compare alternative POL/POD before booking</li></ul>
         </Block>
       </section>
 
