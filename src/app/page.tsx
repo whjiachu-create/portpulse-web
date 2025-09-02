@@ -4,14 +4,9 @@ import Solutions from "@/components/Solutions";
 import TrendMini from "@/components/TrendMini";
 import WorldMiniMap from "@/components/WorldMiniMap";
 import CoverageStrip from "@/components/CoverageStrip";
-import { ports } from "@/data/portsCoverage";
-
 export const dynamic = "force-static";
 
 export default function HomePage() {
-  const live = ports.filter(p => p.status === "Live").length;
-  const onreq = ports.filter(p => p.status === "On-request").length;
-
   return (
     <main>
       {/* HERO */}
@@ -43,8 +38,8 @@ export default function HomePage() {
       {/* KPI strip */}
       <section className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Stat label="Ports covered (Live)" value={String(live)} />
-          <Stat label="On-request (expandable)" value={String(onreq)} />
+          <Stat label="Ports covered (Live)" value="50+" />
+          <Stat label="On-request (expandable)" value="100+" />
           <Stat label="API latency (p95)" value="≤ 300ms" />
         </div>
       </section>
