@@ -1,11 +1,10 @@
-import type { Metadata, Viewport } from "next";
+import type { Metadata } from "next";
 import "./globals.css";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://useportpulse.com"),
-title: "PortPulse — APIs for Port Operations",
+  title: "PortPulse — APIs for Port Operations",
   description:
     "Port congestion, yard dwell, berth efficiency and momentum via unified APIs. JSON/CSV, freshness SLO, p95 < 300ms.",
   openGraph: {
@@ -26,11 +25,8 @@ title: "PortPulse — APIs for Port Operations",
     images: ["/og.png"],
   },
   icons: { icon: "/icon.svg" },
-
+  themeColor: "#0B2740",
 };
-
-
-export const viewport: Viewport = { themeColor: "#0B2740" };
 
 export default function RootLayout({
   children,
