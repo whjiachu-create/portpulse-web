@@ -3,10 +3,14 @@ import Solutions from "@/components/Solutions";
 import TrendMini from "@/components/TrendMini";
 import WorldMiniMap from "@/components/WorldMiniMap";
 import CoverageStrip from "@/components/CoverageStrip";
+import ports from "@/data/portsCoverage";
 
 export const dynamic = "force-static";
 
 export default function HomePage() {
+  const live = ports.filter(p => p.status === "Live").length;
+  const onreq = ports.filter(p => p.status === "On-request").length;
+
   return (
     <main>
       {/* HERO */}
@@ -16,17 +20,17 @@ export default function HomePage() {
           alt="PortPulse Hero"
           fill
           priority
+          sizes="100vw"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/50" />
         <div className="relative container mx-auto px-4 py-20 md:py-24 text-white max-w-4xl">
           <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
-            Predictive port operations API
+            Port-level congestion & momentum API
           </h1>
           <p className="mt-3 text-white/90 max-w-2xl">
-            Unified endpoints for congestion, yard dwell, berth efficiency and momentum —
-            plus snapshots, trends and alerts. Reproducible JSON/CSV, cache-friendly,
-            p95 &lt; 300ms, freshness SLO.
+            Standardized JSON/CSV with freshness SLO for planning, analytics and automation.
+            Cache-friendly, p95 &lt; 300ms.
           </p>
           <div className="mt-6 flex gap-3">
             <a href="/docs/examples" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition">Quickstart</a>
@@ -35,11 +39,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* KPI strip (lightweight – keep simple here) */}
+      {/* KPI strip */}
       <section className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-          <Stat label="Ports covered" value="50+" />
-          <Stat label="Freshness (p95)" value="≤ 2h" />
+          <Stat label="Ports covered (Live)" value={String(live)} />
+          <Stat label="On-request (expandable)" value={String(onreq)} />
           <Stat label="API latency (p95)" value="≤ 300ms" />
         </div>
       </section>
@@ -49,23 +53,26 @@ export default function HomePage() {
         <Solutions />
       </section>
 
+      {/* Try-it buttons (auth via ?key=...) */}
+      <section className="container mx-auto px-4 pt-2">
+        <div className="flex flex-wrap gap-2 text-sm">
+          <a className="rounded-md border border-black/10 px-3 py-1 hover:bg-black/5"
+             href="/api/pulse/v1/ports/USLAX/trend?days=7&key=dev_demo_123">JSON · USLAX</a>
+          <a className="rounded-md border border-black/10 px-3 py-1 hover:bg-black/5"
+             href="/api/pulse/v1/ports/USLAX/trend?days=7&format=csv&key=dev_demo_123">CSV · USLAX</a>
+          <a className="rounded-md border border-black/10 px-3 py-1 hover:bg-black/5"
+             href="/api/pulse/v1/health">Health</a>
+        </div>
+      </section>
+
       {/* Live Trend minis */}
-      <section className="container mx-auto px-4 py-8">
+      <section className="container mx-auto px-4 py-6">
         <h2 className="text-xl font-medium">Live trends</h2>
         <p className="text-black/60">Recent 14d snapshots by port.</p>
         <div className="mt-4 grid gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-black/10 bg-white p-4">
-            <h3 className="text-sm font-medium mb-2">USLAX — 14d</h3>
-            <TrendMini unlocode="USLAX" days={14} />
-          </div>
-          <div className="rounded-2xl border border-black/10 bg-white p-4">
-            <h3 className="text-sm font-medium mb-2">USNYC — 14d</h3>
-            <TrendMini unlocode="USNYC" days={14} />
-          </div>
-          <div className="rounded-2xl border border-black/10 bg-white p-4">
-            <h3 className="text-sm font-medium mb-2">SGSIN — 14d</h3>
-            <TrendMini unlocode="SGSIN" days={14} />
-          </div>
+          <Card title="USLAX — 14d"><TrendMini unlocode="USLAX" days={14} /></Card>
+          <Card title="USNYC — 14d"><TrendMini unlocode="USNYC" days={14} /></Card>
+          <Card title="SGSIN — 14d"><TrendMini unlocode="SGSIN" days={14} /></Card>
         </div>
       </section>
 
@@ -98,11 +105,20 @@ export default function HomePage() {
   );
 }
 
-function Stat({label,value}:{label:string;value:string}) {
+function Stat({label, value}:{label:string; value:string}) {
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-5">
       <div className="text-sm text-black/60">{label}</div>
       <div className="text-2xl font-medium mt-1">{value}</div>
+    </div>
+  );
+}
+
+function Card({title, children}:{title:string; children:React.ReactNode}) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-white p-4">
+      <h3 className="text-sm font-medium mb-2">{title}</h3>
+      {children}
     </div>
   );
 }
