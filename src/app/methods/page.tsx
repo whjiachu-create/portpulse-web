@@ -1,53 +1,81 @@
-import Image from "next/image";
-import Link from "next/link";
-
 export const metadata = {
-  title: "Data & Methods",
-  description:
-    "Inputs (AIS, schedules, public stats, events) → cleaning & harmonization → port-level indices with freshness SLO.",
+  title: "Data & Methods — PortPulse",
+  description: "Inputs, cleaning, index construction, and SLO. Download a sample CSV.",
+  openGraph: {
+    title: "Data & Methods — PortPulse",
+    description: "How we build and validate congestion & momentum indices.",
+    url: "https://useportpulse.com/methods",
+    type: "article",
+  },
+  twitter: {
+    card: "summary",
+    title: "Data & Methods — PortPulse",
+    description: "Inputs, cleaning, index construction, and SLO.",
+  },
 };
 
 export default function MethodsPage() {
   return (
-    <div className="container mx-auto px-4 py-10">
-      <h1 className="text-3xl font-semibold tracking-tight">Data & Methods</h1>
-      <div className="mt-2 text-black/70 max-w-3xl space-y-2">
-        <p>
-          We fuse AIS, schedules, public stats and operational events; then clean, geospatially align and
-          harmonize to produce port-level indices for congestion, throughput proxy and momentum (0–100).
-        </p>
-        <ul className="list-disc pl-5 text-sm">
-          <li>Standardized schema across regions; JSON/CSV output; cache-friendly.</li>
-          <li>Bias correction & anomaly handling to reduce drift across sources.</li>
-          <li>Freshness SLO for key ports ≤ 2h; others ≤ 6h / daily.</li>
-        </ul>
-      </div>
+    <main className="container mx-auto px-4 py-10">
+      <h1 className="text-3xl font-semibold tracking-tight">Data &amp; Methods</h1>
+      <p className="mt-2 text-black/60 max-w-3xl">
+        A concise overview of inputs, harmonization and index construction. Full details are available to customers under NDA.
+      </p>
 
-      <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4">
-        <Image
-          src="/images/methods-flow.png"
-          alt="Methodology diagram"
-          width={1200}
-          height={600}
-          className="w-full h-auto hidden md:block"
-        />
-        <Image
-          src="/images/methods-flow.placeholder.svg"
-          alt="Methodology diagram placeholder"
-          width={1200}
-          height={600}
-          className="w-full h-auto md:hidden"
-        />
-        <p className="text-xs text-black/50 mt-2">
-          Replace <code>/public/images/methods-flow.png</code> with your final diagram.
-        </p>
-      </div>
+      <section className="mt-6 grid gap-4 md:grid-cols-2">
+        <Card title="Inputs">
+          <ul className="list-disc pl-5 text-sm text-black/70 space-y-1">
+            <li>AIS signals (terrestrial &amp; satellite)</li>
+            <li>Schedules &amp; public statistics</li>
+            <li>Operational events &amp; advisories</li>
+            <li>Weather &amp; channel disruptions</li>
+          </ul>
+        </Card>
+        <Card title="Cleaning &amp; harmonization">
+          <ul className="list-disc pl-5 text-sm text-black/70 space-y-1">
+            <li>Geo-alignment (anchorage/berth/basin)</li>
+            <li>Bias correction &amp; anomaly handling</li>
+            <li>Comparable port definitions</li>
+            <li>Change logs &amp; deprecations</li>
+          </ul>
+        </Card>
+      </section>
 
-      <div className="mt-6">
-        <Link href="/samples/ports_sample.csv" className="rounded-md border border-black/10 px-3 py-1 text-sm hover:bg-black/5">
-          Download sample CSV
-        </Link>
-      </div>
+      <section className="mt-6 grid gap-4 md:grid-cols-2">
+        <Card title="Indices">
+          <ul className="list-disc pl-5 text-sm text-black/70 space-y-1">
+            <li>Congestion: waiting hours, queue, berth efficiency</li>
+            <li>Throughput proxies: port/route level</li>
+            <li>Momentum: standardized 0–100 with deltas</li>
+          </ul>
+        </Card>
+        <Card title="SLO &amp; validation">
+          <ul className="list-disc pl-5 text-sm text-black/70 space-y-1">
+            <li>Freshness targets by port tier</li>
+            <li>Latency distributions (p95)</li>
+            <li>Sampling &amp; backtests</li>
+          </ul>
+        </Card>
+      </section>
+
+      <section className="mt-6 rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <div className="text-lg font-medium">Download sample CSV</div>
+            <p className="text-black/60 text-sm">Two ports · one week · anonymized fields.</p>
+          </div>
+          <a href="/samples/ports_sample.csv" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 text-sm hover:opacity-90">Download</a>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+function Card({ title, children }:{title:string; children:React.ReactNode}) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm">
+      <div className="text-sm font-medium">{title}</div>
+      {children}
     </div>
   );
 }
