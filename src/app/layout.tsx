@@ -3,7 +3,7 @@ import "./globals.css";
 
 import Analytics from "@/components/Analytics";
 export const metadata: Metadata = {title: "PortPulse — APIs for Port Operations",
-  description: "Port-level congestion, dwell, berth efficiency and momentum via unified APIs. JSON/CSV, freshness SLO, p95 < 300ms.",
+  description: "Port-level congestion, dwell, berth efficiency and momentum via unified APIs. JSON/CSV, freshness SLO, p95 &lt; 300ms.",
   openGraph: {
     title: "PortPulse — APIs for Port Operations",
     description: "Port-level congestion and momentum APIs with freshness SLO.",

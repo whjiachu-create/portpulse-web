@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 
 export default function SiteHeader() {
@@ -8,7 +9,7 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-black/10">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <img src="/logos/portpulse-mark.svg" alt="PortPulse" className="h-6 w-6"/>
+          <Image src="/logos/portpulse-mark.svg" alt="PortPulse" width={24} height={24} priority />
           <span className="font-semibold">PortPulse</span>
         </Link>
 
