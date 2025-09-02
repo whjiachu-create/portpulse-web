@@ -1,4 +1,4 @@
-/* Contact page with business-email validation, prefill from query, JSON copy, and mailto fallback */
+/* Contact page: business-email validation, prefill, JSON copy, mailto fallback */
 "use client";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -42,7 +42,10 @@ ${JSON.stringify(form, null, 2)}`;
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(""); setOk(null);
-    if (!isBusinessEmail(form.email)) { setError("请使用工作邮箱（非公共邮箱，如 gmail/outlook/yahoo 等）"); return; }
+    if (!isBusinessEmail(form.email)) {
+      setError("Please use a business email (no public domains like gmail/outlook/yahoo).");
+      return;
+    }
     try {
       const res = await fetch("/api/contact", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form) });
       if (!res.ok) throw new Error(String(res.status));

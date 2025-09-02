@@ -9,20 +9,25 @@ export default function CoverageStrip() {
     <div className="rounded-2xl border border-black/10 bg-white p-6">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h3 className="text-xl font-medium">全球覆盖与可拓展</h3>
+          <h3 className="text-xl font-medium">Global coverage & expansion</h3>
           <p className="text-black/70 mt-1">
-            PortPulse 现已覆盖 <strong>{live}+</strong> 重点港口。更多港口可按需新增，通常 <strong>2–4 周</strong> 完成接入与验收。
+            PortPulse currently covers <strong>{live}+</strong> key ports. More ports can be added on request,
+            with a typical onboarding of <strong>2–4 weeks</strong>.
           </p>
-          <p className="text-black/50 text-sm mt-1">新增港口遵循相同指标定义与 SLO，确保横向可比。</p>
+          <p className="text-black/50 text-sm mt-1">
+            New ports follow the same metric definitions and freshness SLO for cross-port comparability.
+          </p>
         </div>
         <div className="flex gap-2 flex-wrap">
           {byRegion.map(x => (
-            <span key={x.id} className="px-3 py-1.5 rounded-full bg-black/5 text-sm">{x.name} {x.count}</span>
+            <span key={x.id} className="px-3 py-1.5 rounded-full bg-black/5 text-sm">
+              {x.name} {x.count}
+            </span>
           ))}
         </div>
         <div className="flex gap-2">
-          <a href="/coverage" className="rounded-xl bg-[#0B2740] text-white px-4 py-2 hover:opacity-90 transition">查看完整清单</a>
-          <a href="/contact?intent=port_request" className="rounded-xl border border-black/10 px-4 py-2 hover:bg-black/5 transition">申请新增港口</a>
+          <a href="/coverage" className="rounded-xl bg-[#0B2740] text-white px-4 py-2 hover:opacity-90 transition">View full list</a>
+          <a href="/contact?intent=port_request" className="rounded-xl border border-black/10 px-4 py-2 hover:bg-black/5 transition">Request new port</a>
         </div>
       </div>
     </div>
