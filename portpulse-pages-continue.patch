@@ -1,0 +1,210 @@
+diff --git a/src/app/contact/page.tsx b/src/app/contact/page.tsx
+index 7e8f9a0..4b3e9d1 100644
+--- a/src/app/contact/page.tsx
++++ b/src/app/contact/page.tsx
+@@ -1,9 +1,9 @@
+ /* Finalized contact page with business-email validation and mailto fallback */
+ "use client";
+
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ import { useSearchParams } from "next/navigation";
+ import isBusinessEmail from "@/lib/isBusinessEmail";
+
+ export default function ContactPage() {
+   const params = useSearchParams();
+   const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+@@ -16,16 +16,16 @@ export default function ContactPage() {
+     JSON.stringify(form, null, 2)
+   )}`;
+
+-  // Prefill from query: ?intent=port_request&port=...&country=...
+-  // Also supports ?intent=sales / ?intent=trial
+-  React.useEffect(() => {
++  // Prefill from query: ?intent=port_request&port=...&country=...  (also supports sales / trial)
++  useEffect(() => {
+     const intent = params.get("intent") || "";
+     const port = params.get("port");
+     const country = params.get("country");
+     if (intent === "port_request") {
+       setForm((s) => ({
+         ...s,
+         message: s.message || `Request new port: ${port ?? ""}${country ? `, ${country}` : ""}`,
+       }));
+     }
+-  }, [params]);
++  }, [params, setForm]);
+diff --git a/src/app/docs/api/page.tsx b/src/app/docs/api/page.tsx
+index 6b6b2e1..b2a9f44 100644
+--- a/src/app/docs/api/page.tsx
++++ b/src/app/docs/api/page.tsx
+@@ -1,17 +1,20 @@
+ "use client";
+-import Script from "next/script";
++import Script from "next/script";
++import type { DetailedHTMLProps, HTMLAttributes } from "react";
+
+ declare global {
+-  // web component typing
+-  namespace JSX { interface IntrinsicElements { "rapi-doc": any } }
++  // web component typing (no 'any' to satisfy eslint)
++  namespace JSX {
++    interface IntrinsicElements {
++      "rapi-doc": DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>;
++    }
++  }
+ }
+
+ export default function ApiDocs() {
+   const specUrl = "https://docs.useportpulse.com/openapi.json";
+   return (
+     <div className="container mx-auto px-2 md:px-4 py-4 md:py-8">
+-      {/* CDN 方式引入 RapiDoc，避免额外依赖安装 */}
+       <Script src="https://unpkg.com/rapidoc/dist/rapidoc-min.js" strategy="lazyOnload" />
+       <rapi-doc
+         spec-url={specUrl}
+diff --git a/src/app/product/page.tsx b/src/app/product/page.tsx
+new file mode 100644
+index 0000000..7b4f1aa
+--- /dev/null
++++ b/src/app/product/page.tsx
+@@ -0,0 +1,33 @@
++export const dynamic = "force-static";
++
++export default function ProductHub() {
++  const cards = [
++    { href: "/product/congestion", title: "Port Congestion API", desc: "Waiting time, queue length, berth efficiency — normalized across regions." },
++    { href: "/product/momentum", title: "Trade Momentum API", desc: "Throughput proxies and momentum indices at port/route level." },
++    { href: "/product/alerts", title: "Port Health Alerts (optional)", desc: "Thresholds & anomaly alerts via Webhook/Email/Slack." },
++  ];
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Product</h1>
++      <p className="mt-2 text-black/60">APIs for port operations and trade momentum.</p>
++      <div className="mt-8 grid gap-4 md:grid-cols-3">
++        {cards.map(c => (
++          <a key={c.href} href={c.href} className="rounded-2xl border border-black/10 bg-white p-5 hover:shadow-sm transition">
++            <h2 className="text-lg font-medium">{c.title}</h2>
++            <p className="mt-1 text-sm text-black/60">{c.desc}</p>
++          </a>
++        ))}
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/use-cases/page.tsx b/src/app/use-cases/page.tsx
+new file mode 100644
+index 0000000..f4b1e32
+--- /dev/null
++++ b/src/app/use-cases/page.tsx
+@@ -0,0 +1,38 @@
++export const dynamic = "force-static";
++
++export default function UseCasesHub() {
++  const cards = [
++    { href: "/use-cases/lsp", title: "3PL / Freight Forwarders", desc: "Plan networks with port-level signals to reduce cost-to-serve." },
++    { href: "/use-cases/shippers", title: "Shippers & Manufacturers", desc: "Stabilize inbound plans by anticipating port volatility." },
++    { href: "/use-cases/tech", title: "Logistics Tech / Analytics Vendors", desc: "Embed standardized metrics to accelerate GTM." },
++    { href: "/use-cases/macro", title: "Macro & Quant", desc: "Early trade signals from throughput proxies and momentum." },
++  ];
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Use Cases</h1>
++      <p className="mt-2 text-black/60">Pick a path that matches your workflow.</p>
++      <div className="mt-8 grid gap-4 md:grid-cols-2">
++        {cards.map(c => (
++          <a key={c.href} href={c.href} className="rounded-2xl border border-black/10 bg-white p-5 hover:shadow-sm transition">
++            <h2 className="text-lg font-medium">{c.title}</h2>
++            <p className="mt-1 text-sm text-black/60">{c.desc}</p>
++          </a>
++        ))}
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/coverage/page.tsx b/src/app/coverage/page.tsx
+index a8cc3de..d1a4bc7 100644
+--- a/src/app/coverage/page.tsx
++++ b/src/app/coverage/page.tsx
+@@ -1,9 +1,17 @@
+ "use client";
+ import { useEffect, useMemo, useState } from "react";
+ import { PORTS_COVERAGE, regions, statuses, type PortItem } from "@/data/portsCoverage";
+
++function gtagEvent(name: string, params?: Record<string, unknown>) {
++  if (typeof window === "undefined") return;
++  const w = window as unknown as { gtag?: (...args: unknown[]) => void };
++  if (typeof w.gtag === "function") {
++    w.gtag("event", name, params ?? {});
++  }
++}
++
+ type Region = (typeof regions)[number]["id"] | "ALL";
+ type Status = (typeof statuses)[number] | "ALL";
+
+ export default function CoveragePage() {
+   const [region, setRegion] = useState<Region>("ALL");
+@@ -16,20 +24,18 @@ export default function CoveragePage() {
+   }, [region, status, q]);
+
+   useEffect(() => {
+-    if (typeof window !== "undefined" && "gtag" in window && typeof (window as any).gtag === "function") {
+-      (window as any).gtag("event", "coverage_view");
+-    }
++    gtagEvent("coverage_view");
+   }, []);
+
+   // fire filter/search events
+   useEffect(() => {
+-    if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+-      (window as any).gtag("event", "coverage_filter", {
+-        region, status, q_len: q.length,
+-      });
+-    }
++    gtagEvent("coverage_filter", { region, status, q_len: q.length });
+   }, [region, status, q]);
+
+   function dlCsv(rows: PortItem[]) {
+@@ -78,7 +84,7 @@ export default function CoveragePage() {
+                 <Td>{p.freshness}</Td>
+                 <Td>{p.notes ?? ""}</Td>
+                 <Td>
+-                  <a
++                  <a
+                      onClick={()=>{
+-                       if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
+-                         (window as any).gtag("event", "port_request", { port: p.port, country: p.country, region: p.region });
+-                       }
++                       gtagEvent("port_request", { port: p.port, country: p.country, region: p.region });
+                      }}
+                      href={`/contact?intent=port_request&port=${encodeURIComponent(p.port)}&country=${encodeURIComponent(p.country)}`}
+                      className="rounded-lg border border-black/10 px-3 py-1 hover:bg-black/5 inline-block">
+                     Request this port
+                   </a>
+diff --git a/src/components/SiteFooter.tsx b/src/components/SiteFooter.tsx
+index 1a2b3c4..7f8e9d0 100644
+--- a/src/components/SiteFooter.tsx
++++ b/src/components/SiteFooter.tsx
+@@ -1,6 +1,18 @@
+ export default function SiteFooter() {
+   return (
+-    <footer className="border-t border-black/10 py-10 text-sm text-black/60">
+-      <div className="container mx-auto px-4">© PortPulse</div>
++    <footer className="border-top border-black/10 py-10 text-sm text-black/60">
++      <div className="container mx-auto px-4">
++        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
++          <div>© PortPulse</div>
++          <nav className="flex flex-wrap gap-4">
++            <a href="/product" className="hover:opacity-80">Product</a>
++            <a href="/use-cases" className="hover:opacity-80">Use Cases</a>
++            <a href="/coverage" className="hover:opacity-80">Coverage</a>
++            <a href="/methods" className="hover:opacity-80">Data & Methods</a>
++            <a href="/docs" className="hover:opacity-80">Docs</a>
++            <a href="/security" className="hover:opacity-80">Security</a>
++            <a href="/faq" className="hover:opacity-80">FAQ</a>
++          </nav>
++        </div>
++      </div>
+     </footer>
+   );
+ }

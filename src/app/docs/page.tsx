@@ -1,5 +1,4 @@
 export const dynamic = "force-static";
-
 export default function DocsHome() {
   const cards = [
     { href: "/docs/api", title: "API Reference", desc: "OpenAPI reference rendered with RapiDoc." },

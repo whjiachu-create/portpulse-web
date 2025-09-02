@@ -1,0 +1,526 @@
+diff --git a/src/app/contact/page.tsx b/src/app/contact/page.tsx
+index 1b2c3d4..7e8f9a0 100644
+--- a/src/app/contact/page.tsx
++++ b/src/app/contact/page.tsx
+@@ -1,10 +1,12 @@
+ /* Finalized contact page with business-email validation and mailto fallback */
+ "use client";
+
+ import { useState } from "react";
++import { useSearchParams } from "next/navigation";
+ import isBusinessEmail from "@/lib/isBusinessEmail";
+
+ export default function ContactPage() {
+-  const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
++  const params = useSearchParams();
++  const [form, setForm] = useState({ name: "", email: "", company: "", message: "" });
+   const [error, setError] = useState<string>("");
+   const [ok, setOk] = useState<boolean | null>(null);
+
+@@ -14,6 +16,19 @@ export default function ContactPage() {
+     JSON.stringify(form, null, 2)
+   )}`;
+
++  // Prefill from query: ?intent=port_request&port=...&country=...
++  // Also supports ?intent=sales / ?intent=trial
++  React.useEffect(() => {
++    const intent = params.get("intent") || "";
++    const port = params.get("port");
++    const country = params.get("country");
++    if (intent === "port_request") {
++      setForm((s) => ({
++        ...s,
++        message: s.message || `Request new port: ${port ?? ""}${country ? `, ${country}` : ""}`,
++      }));
++    }
++  }, [params]);
+   async function onSubmit(e: React.FormEvent) {
+     e.preventDefault();
+     setError(""); setOk(null);
+diff --git a/src/app/coverage/page.tsx b/src/app/coverage/page.tsx
+index 7f1a1c2..a8cc3de 100644
+--- a/src/app/coverage/page.tsx
++++ b/src/app/coverage/page.tsx
+@@ -1,11 +1,12 @@
+ "use client";
+-import { useEffect, useMemo, useState } from "react";
++import { useEffect, useMemo, useState } from "react";
+ import { PORTS_COVERAGE, regions, statuses, type PortItem } from "@/data/portsCoverage";
+
+ type Region = (typeof regions)[number]["id"] | "ALL";
+ type Status = (typeof statuses)[number] | "ALL";
+
+ export default function CoveragePage() {
+   const [region, setRegion] = useState<Region>("ALL");
+   const [status, setStatus] = useState<Status>("ALL");
+   const [q, setQ] = useState("");
+@@ -19,6 +20,16 @@ export default function CoveragePage() {
+   }, [region, status, q]);
+
+   useEffect(() => {
+-    if (typeof window !== "undefined" && (window as any).gtag) {
+-      (window as any).gtag("event", "coverage_view");
++    if (typeof window !== "undefined" && "gtag" in window && typeof (window as any).gtag === "function") {
++      (window as any).gtag("event", "coverage_view");
+     }
+   }, []);
++
++  // fire filter/search events
++  useEffect(() => {
++    if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
++      (window as any).gtag("event", "coverage_filter", {
++        region, status, q_len: q.length,
++      });
++    }
++  }, [region, status, q]);
+
+   function dlCsv(rows: PortItem[]) {
+     const head = ["Port","Country","Region","Status","Metrics","Freshness SLO","Notes"];
+@@ -72,7 +83,14 @@ export default function CoveragePage() {
+                 <Td>{p.freshness}</Td>
+                 <Td>{p.notes ?? ""}</Td>
+                 <Td>
+-                  <a href={`/contact?intent=port_request&port=${encodeURIComponent(p.port)}&country=${encodeURIComponent(p.country)}`}
++                  <a
++                     onClick={()=>{
++                       if (typeof window !== "undefined" && typeof (window as any).gtag === "function") {
++                         (window as any).gtag("event", "port_request", { port: p.port, country: p.country, region: p.region });
++                       }
++                     }}
++                     href={`/contact?intent=port_request&port=${encodeURIComponent(p.port)}&country=${encodeURIComponent(p.country)}`}
+                      className="rounded-lg border border-black/10 px-3 py-1 hover:bg-black/5 inline-block">
+                     Request this port
+                   </a>
+diff --git a/src/app/methods/page.tsx b/src/app/methods/page.tsx
+new file mode 100644
+index 0000000..6c0f1aa
+--- /dev/null
++++ b/src/app/methods/page.tsx
+@@ -0,0 +1,86 @@
++export const dynamic = "force-static";
++
++export default function MethodsPage() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Data & Methods</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        How we construct congestion, throughput proxies and momentum indices — inputs, normalization and quality controls.
++      </p>
++
++      <section className="mt-8 grid gap-4">
++        <div className="rounded-2xl border border-black/10 bg-white p-5">
++          <h2 className="text-lg font-medium">Inputs</h2>
++          <ul className="mt-2 list-disc pl-5 text-black/70">
++            <li>AIS movement & port call events</li>
++            <li>Schedules and public statistics</li>
++            <li>Advisories and disruptions where applicable</li>
++          </ul>
++        </div>
++        <div className="rounded-2xl border border-black/10 bg-white p-5">
++          <h2 className="text-lg font-medium">Normalization</h2>
++          <ul className="mt-2 list-disc pl-5 text-black/70">
++            <li>Port geometry: anchorage/berth/basin mapping layers</li>
++            <li>Dedup and noise removal; timezone and daily cut-off alignment</li>
++            <li>Comparable definitions across regions</li>
++          </ul>
++        </div>
++        <div className="rounded-2xl border border-black/10 bg-white p-5">
++          <h2 className="text-lg font-medium">Indices</h2>
++          <ul className="mt-2 list-disc pl-5 text-black/70">
++            <li><strong>Congestion</strong>: waiting time, queue length, berth efficiency</li>
++            <li><strong>Throughput proxy</strong>: port/route level activity proxies</li>
++            <li><strong>Momentum</strong>: standardized 0–100 with MoM/YoY deltas</li>
++          </ul>
++        </div>
++        <div className="rounded-2xl border border-black/10 bg-white p-5">
++          <h2 className="text-lg font-medium">SLO & Quality</h2>
++          <ul className="mt-2 list-disc pl-5 text-black/70">
++            <li>Freshness tiers: ≤2h (tier-1), ≤6h (tier-2), daily (long tail)</li>
++            <li>Backfill and consistency checks with sampling windows</li>
++          </ul>
++        </div>
++      </section>
++
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/api" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Read API</a>
++        <a href="/docs/examples" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Quickstart</a>
++      </div>
++    </div>
++  );
++}
+diff --git a/src/app/product/alerts/page.tsx b/src/app/product/alerts/page.tsx
+new file mode 100644
+index 0000000..2b0b3b2
+--- /dev/null
++++ b/src/app/product/alerts/page.tsx
+@@ -0,0 +1,62 @@
++export const dynamic = "force-static";
++
++export default function AlertsProduct() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Port Health Alerts (Optional)</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Turn thresholds and anomalies into actionable alerts via Webhook / Email / Slack.
++      </p>
++      <div className="mt-6 grid gap-4 md:grid-cols-2">
++        <Card title="Rules">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Waiting time &gt; p90 for 3 consecutive days</li>
++            <li>Momentum drop &gt; 20% WoW</li>
++            <li>Queue surge vs baseline</li>
++          </ul>
++        </Card>
++        <Card title="Integrations">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Webhook (signed)</li>
++            <li>Email templates</li>
++            <li>Slack channels</li>
++          </ul>
++        </Card>
++      </div>
++      <div className="mt-8 flex gap-3">
++        <a href="/contact?intent=sales" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Talk to us</a>
++        <a href="/docs/api" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Read API</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/product/congestion/page.tsx b/src/app/product/congestion/page.tsx
+new file mode 100644
+index 0000000..b7cfe34
+--- /dev/null
++++ b/src/app/product/congestion/page.tsx
+@@ -0,0 +1,97 @@
++import TrendMini from "@/components/TrendMini";
++export const dynamic = "force-static";
++
++export default function CongestionProduct() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Port Congestion API</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Normalize waiting time and operational flow metrics across regions. One schema, consistent definitions.
++      </p>
++
++      <section className="mt-8 grid gap-4 md:grid-cols-3">
++        <TrendMini title="USLAX — 14d dwell" unlocode="USLAX" />
++        <TrendMini title="USNYC — 14d dwell" unlocode="USNYC" />
++        <TrendMini title="SGSIN — 14d dwell" unlocode="SGSIN" />
++      </section>
++
++      <section className="mt-8 grid gap-4">
++        <Card title="Key Metrics">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Waiting time &amp; queue length (anchorage/berth)</li>
++            <li>Berth efficiency &amp; operation time</li>
++            <li>Daily and weekly granularity</li>
++          </ul>
++        </Card>
++        <Card title="SLO & Coverage">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Tier-1 ports ≤2h freshness; tier-2 ≤6h; long tail daily</li>
++            <li>50+ live; more on-request with 2–4 weeks onboarding</li>
++          </ul>
++        </Card>
++        <Card title="Quickstart">
++          <pre className="text-sm overflow-x-auto p-3 rounded-lg bg-black/5">{`curl -sS -H "X-API-Key: dev_demo_123" \\
++  "https://api.useportpulse.com/v1/ports/USLAX/trend?days=7" | jq .`}</pre>
++        </Card>
++      </section>
++
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/examples" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Try the API</a>
++        <a href="/coverage" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">See coverage</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/product/momentum/page.tsx b/src/app/product/momentum/page.tsx
+new file mode 100644
+index 0000000..b8c1e2f
+--- /dev/null
++++ b/src/app/product/momentum/page.tsx
+@@ -0,0 +1,74 @@
++export const dynamic = "force-static";
++
++export default function MomentumProduct() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Trade Momentum API</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Throughput and momentum indices at port/route level for planning and macro monitoring.
++      </p>
++
++      <section className="mt-8 grid gap-4">
++        <Card title="What you get">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Standardized 0–100 momentum index with MoM/YoY deltas</li>
++            <li>Throughput proxies to compare routes/ports</li>
++            <li>CSV/JSON; ready for BI and notebooks</li>
++          </ul>
++        </Card>
++        <Card title="Use cases">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>S&amp;OP planning and route selection</li>
++            <li>Macro early signals for buy-side</li>
++            <li>Benchmarking for logistics analytics vendors</li>
++          </ul>
++        </Card>
++      </section>
++
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/api" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Read API</a>
++        <a href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Talk to us</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/use-cases/lsp/page.tsx b/src/app/use-cases/lsp/page.tsx
+new file mode 100644
+index 0000000..1e2c3a4
+--- /dev/null
++++ b/src/app/use-cases/lsp/page.tsx
+@@ -0,0 +1,60 @@
++export const dynamic = "force-static";
++
++export default function LSPUseCase() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">3PL / Freight Forwarders</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Reduce cost-to-serve by planning with port-level congestion and momentum signals.
++      </p>
++      <section className="mt-8 grid gap-4">
++        <Card title="Pain">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Volatile waiting time and berth efficiency on key nodes</li>
++            <li>Reactive trucking and capacity booking</li>
++          </ul>
++        </Card>
++        <Card title="How we help">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Weekly network planning with normalized metrics</li>
++            <li>Preemptive reroute or rebook against hotspots</li>
++          </ul>
++        </Card>
++      </section>
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/examples" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Run a demo</a>
++        <a href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Talk to us</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/use-cases/macro/page.tsx b/src/app/use-cases/macro/page.tsx
+new file mode 100644
+index 0000000..2d3c4b5
+--- /dev/null
++++ b/src/app/use-cases/macro/page.tsx
+@@ -0,0 +1,53 @@
++export const dynamic = "force-static";
++
++export default function MacroUseCase() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Macro & Quant</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Port-level throughput proxies and momentum indices as early signals for global trade cycles.
++      </p>
++      <section className="mt-8 grid gap-4">
++        <Card title="Use">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Nowcast of trade flows at key nodes</li>
++            <li>Route vs port decomposition for signal attribution</li>
++          </ul>
++        </Card>
++        <Card title="Delivery">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>CSV/JSON feeds; backfill on request</li>
++            <li>Latency SLO for intraday/overnight refresh</li>
++          </ul>
++        </Card>
++      </section>
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/api" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Read API</a>
++        <a href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Book a call</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/use-cases/shippers/page.tsx b/src/app/use-cases/shippers/page.tsx
+new file mode 100644
+index 0000000..3e4d5c6
+--- /dev/null
++++ b/src/app/use-cases/shippers/page.tsx
+@@ -0,0 +1,55 @@
++export const dynamic = "force-static";
++
++export default function ShippersUseCase() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Shippers & Manufacturers</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Stabilize inbound plans by anticipating port congestion and trade momentum shifts.
++      </p>
++      <section className="mt-8 grid gap-4">
++        <Card title="Pain">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Production & inbound schedules disrupted by port volatility</li>
++          </ul>
++        </Card>
++        <Card title="How we help">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Pick steadier routes; adjust buffer days by node</li>
++            <li>Alerts on threshold breaches for priority POs</li>
++          </ul>
++        </Card>
++      </section>
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/examples" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Try the API</a>
++        <a href="/pricing" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">See pricing</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/app/use-cases/tech/page.tsx b/src/app/use-cases/tech/page.tsx
+new file mode 100644
+index 0000000..4f5a6b7
+--- /dev/null
++++ b/src/app/use-cases/tech/page.tsx
+@@ -0,0 +1,54 @@
++export const dynamic = "force-static";
++
++export default function TechUseCase() {
++  return (
++    <div className="container mx-auto px-4 py-12 md:py-16">
++      <h1 className="text-3xl font-semibold tracking-tight">Logistics Tech / Analytics Vendors</h1>
++      <p className="mt-2 text-black/60 max-w-3xl">
++        Embed standardized port metrics to accelerate go-to-market and regional coverage.
++      </p>
++      <section className="mt-8 grid gap-4">
++        <Card title="Pain">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Heterogeneous port definitions across regions</li>
++          </ul>
++        </Card>
++        <Card title="How we help">
++          <ul className="list-disc pl-5 text-black/70">
++            <li>Unified schema & SLO; partner-friendly licensing</li>
++            <li>Embeddable endpoints with caching guidance</li>
++          </ul>
++        </Card>
++      </section>
++      <div className="mt-8 flex gap-3">
++        <a href="/docs/api" className="rounded-xl bg-[#0B2740] text-white px-5 py-2 hover:opacity-90 transition">Read API</a>
++        <a href="/contact?intent=sales" className="rounded-xl border border-black/10 px-5 py-2 hover:bg-black/5 transition">Partner with us</a>
++      </div>
++    </div>
++  );
++}
++function Card({title, children}:{title:string; children:React.ReactNode}) {
++  return (
++    <div className="rounded-2xl border border-black/10 bg-white p-5">
++      <h2 className="text-lg font-medium">{title}</h2>
++      <div className="mt-2">{children}</div>
++    </div>
++  );
++}
+diff --git a/src/components/Solutions.tsx b/src/components/Solutions.tsx
+index 9a8b7c6..4b5a3d1 100644
+--- a/src/components/Solutions.tsx
++++ b/src/components/Solutions.tsx
+@@ -1,9 +1,31 @@
+ export default function Solutions() {
+-  // legacy cards...
+-  return <div className="grid gap-6 md:grid-cols-3">TODO</div>;
++  const items = [
++    {
++      title: "Port Congestion API",
++      desc: "Waiting time, queue length, berth efficiency — normalized across regions.",
++      href: "/product/congestion",
++    },
++    {
++      title: "Trade Momentum API",
++      desc: "Port/route throughput proxies and momentum indices for planning & macro.",
++      href: "/product/momentum",
++    },
++    {
++      title: "Port Health Alerts (optional)",
++      desc: "Thresholds & anomaly alerts via Webhook/Email/Slack.",
++      href: "/product/alerts",
++    },
++  ];
++  return (
++    <div className="grid gap-6 md:grid-cols-3">
++      {items.map((x) => (
++        <a key={x.title} href={x.href} className="rounded-2xl border border-black/10 bg-white p-5 hover:shadow-sm transition">
++          <h3 className="text-lg font-medium">{x.title}</h3>
++          <p className="mt-1 text-black/60 text-sm">{x.desc}</p>
++        </a>
++      ))}
++    </div>
++  );
+ }
+-
+diff --git a/src/app/docs/page.tsx b/src/app/docs/page.tsx
+index f97f1f7..3a5b6c2 100644
+--- a/src/app/docs/page.tsx
++++ b/src/app/docs/page.tsx
+@@ -1,6 +1,6 @@
+ export const dynamic = "force-static";
+
+ export default function DocsHome() {
+-  const cards = [
++  const cards = [
+     { href: "/docs/api", title: "API Reference", desc: "OpenAPI reference rendered with RapiDoc." },
+     { href: "/docs/examples", title: "Quickstart & Examples", desc: "cURL / Python / JavaScript — copy & run." },
+     { href: "/docs/sdk", title: "SDK Samples", desc: "Minimal clients in Python and JavaScript." },
