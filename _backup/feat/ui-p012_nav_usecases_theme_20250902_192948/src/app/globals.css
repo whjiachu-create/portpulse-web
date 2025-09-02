@@ -29,17 +29,3 @@
 
 /* 浮动工具条小胶囊 */
 .pill { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs; }
-
-/* ==== PortPulse Theme Tokens ==== */
-:root{
-  --brand-primary:#0B2740;   /* deep navy */
-  --brand-accent:#26B1FF;    /* ocean blue */
-  --bg-soft:#F7FBFF;         /* very light blue */
-  --bg-muted:#F3F6F8;        /* soft gray */
-}
-.section-soft{ background:var(--bg-soft); }
-.section-muted{ background:var(--bg-muted); }
-/* subtle card shadow */
-.card{ @apply rounded-2xl border border-black/10 bg-white shadow-sm; }
-/* accent ring helper */
-.ring-accent{ box-shadow:0 0 0 2px var(--brand-accent) inset; }

@@ -1,8 +1,8 @@
 
 import "./globals.css";
 
-import Analytics from "@/components/Analytics";
-export const metadata: Metadata = {title: "PortPulse — APIs for Port Operations",
+export const metadata: Metadata = {
+  title: "PortPulse — APIs for Port Operations",
   description: "Port-level congestion, dwell, berth efficiency and momentum via unified APIs. JSON/CSV, freshness SLO, p95 < 300ms.",
   openGraph: {
     title: "PortPulse — APIs for Port Operations",
@@ -14,8 +14,7 @@ export const metadata: Metadata = {title: "PortPulse — APIs for Port Operation
     card: "summary_large_image",
     title: "PortPulse — APIs for Port Operations",
     description: "Developer-first port operations data."
-  ,
-  themeColor: "#0B2740"
+  }
 };
 
 import type { Metadata } from "next";
@@ -30,8 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
-        <Analytics />
-</body>
+      </body>
     </html>
   );
 }
