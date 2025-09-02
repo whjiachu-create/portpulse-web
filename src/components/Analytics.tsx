@@ -2,12 +2,23 @@
 import { useEffect } from "react";
 import Script from "next/script";
 
-declare global { interface Window { dataLayer: any[]; gtag: (...args:any[])=>void } }
+type GtagArg =
+  | ["js", Date]
+  | ["config", string, Record<string, unknown>?]
+  | ["event", string, Record<string, unknown>?];
+
+declare global {
+  interface Window {
+    dataLayer: unknown[];
+    gtag: (...args: GtagArg) => void;
+  }
+}
 
 export default function Analytics() {
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
   const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
   const prod = process.env.NODE_ENV === "production";
+
   return (
     <>
       {prod && gaId && (
@@ -36,23 +47,28 @@ y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document
 
 function PageEvents() {
   useEffect(() => {
-    // 基础 page_view
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "page_view", { page_location: window.location.href, page_path: window.location.pathname });
+    if (typeof window !== "undefined" && typeof window.gtag === "function") {
+      window.gtag("event", "page_view", {
+        page_location: window.location.href,
+        page_path: window.location.pathname,
+      });
       if (window.location.pathname === "/") {
         window.gtag("event", "view_home");
       }
     }
-    // CTA 点击（pricing/contact）
+
     const click = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
-      const a = el.closest("a") as HTMLAnchorElement | null;
-      if (!a || !window.gtag) return;
+      const target = e.target as Element | null;
+      const a = target?.closest("a") as HTMLAnchorElement | null;
+      if (!a || typeof window.gtag !== "function") return;
       if (a.pathname === "/pricing") window.gtag("event", "cta_click", { target: "pricing" });
       if (a.pathname === "/contact") window.gtag("event", "cta_click", { target: "contact" });
     };
-    document.addEventListener("click", click, { capture: true });
-    return () => document.removeEventListener("click", click, { capture: true } as any);
+
+    // 用布尔 capture，便于成对移除
+    document.addEventListener("click", click, true);
+    return () => document.removeEventListener("click", click, true);
   }, []);
+
   return null;
 }
