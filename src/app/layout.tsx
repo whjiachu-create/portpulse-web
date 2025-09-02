@@ -39,7 +39,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+  <head>
+    <link rel="preconnect" href="https://api.useportpulse.com" crossOrigin="" />
+  </head>
       <body className="bg-[#F6F8FB] text-black antialiased">
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+      "@context":"https://schema.org",
+      "@type":"SoftwareApplication",
+      name:"PortPulse",
+      applicationCategory:"BusinessApplication",
+      offers:{ "@type":"Offer", priceCurrency:"USD", price:"399", category:"subscription" }
+    })}} />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

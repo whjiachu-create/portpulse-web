@@ -15,3 +15,19 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+
+export default {
+  async headers() {
+    return [{
+      source: "/(.*)",
+      headers: [
+        { key: "X-Frame-Options", value: "SAMEORIGIN" },
+        { key: "X-Content-Type-Options", value: "nosniff" },
+        { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        { key: "Permissions-Policy", value: "geolocation=()" },
+        { key: "Content-Security-Policy-Report-Only", value: "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https://api.useportpulse.com; frame-ancestors 'self';" }
+      ]
+    }];
+  },
+};

@@ -18,7 +18,7 @@ export default function HomePage() {
           src="/images/hero-port.jpg"
           alt="PortPulse Hero"
           fill
-          priority
+          priority placeholder="blur" blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
