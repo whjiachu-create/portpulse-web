@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 站点通用微调 */
+:root { color-scheme: light; }
+
+/* CTA 暗色背景（海洋夜景感） */
+.bg-night {
+  background: radial-gradient(1200px 600px at 80% 115%, rgba(2,132,199,0.25) 0%, transparent 70%),
+              radial-gradient(1400px 800px at -10% 120%, rgba(14,165,233,0.18) 0%, transparent 70%),
+              #0f172a; /* slate-900 背景作为底色 */
+}

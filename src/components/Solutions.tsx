@@ -1,52 +1,49 @@
 "use client";
 import Link from "next/link";
 
-const items = [
+const cards = [
   {
-    title: "Container & Port Tracking",
-    desc: "Unified events and port snapshots via API.",
-    link: "/pricing",
+    t: "Container & Port Tracking",
+    d: "Unified events and port snapshots via API.",
+    href: "/pricing",
   },
   {
-    title: "Predictive ETAs & Alerts",
-    desc: "Actionable exceptions with reasons and thresholds.",
-    link: "https://docs.useportpulse.com/EXAMPLES.md",
-    ext: true,
+    t: "Predictive ETAs & Alerts",
+    d: "Actionable exceptions with reasons and thresholds.",
+    href: "/pricing",
   },
   {
-    title: "Port Congestion & Dwell",
-    desc: "Plan with reliable waiting-time and congestion signals.",
-    link: "https://docs.useportpulse.com/openapi.json",
-    ext: true,
+    t: "Port Congestion & Dwell",
+    d: "Plan with reliable waiting-time signals.",
+    href: "/pricing",
   },
   {
-    title: "Terminal Events & APIs",
-    desc: "Import/export milestones in one stable schema.",
-    link: "https://docs.useportpulse.com",
-    ext: true,
+    t: "Terminal Events & APIs",
+    d: "Import/export milestones in one schema.",
+    href: "/pricing",
   },
-];
+] as const;
 
 export default function Solutions() {
   return (
-    <section className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-10">
-      <h2 className="mb-4 text-2xl font-semibold">Solutions</h2>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {items.map((it) => (
-          <div key={it.title} className="rounded-xl border bg-white p-5 hover:shadow-sm transition">
-            <div className="text-lg font-semibold">{it.title}</div>
-            <p className="mt-2 text-slate-600">{it.desc}</p>
-            {it.ext ? (
-              <a className="mt-4 inline-block text-sm underline underline-offset-4 text-slate-700" href={it.link} target="_blank" rel="noreferrer">
-                Learn more →
-              </a>
-            ) : (
-              <Link className="mt-4 inline-block text-sm underline underline-offset-4 text-slate-700" href={it.link}>
-                Learn more →
+    <section className="bg-slate-50/70">
+      <div className="mx-auto max-w-6xl px-4 py-10 md:px-6">
+        <h2 className="mb-6 text-2xl font-semibold text-slate-900">Solutions</h2>
+        <div className="grid gap-5 md:grid-cols-2">
+          {cards.map((c) => (
+            <div
+              key={c.t}
+              className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ring-1 ring-black/0 transition
+                         hover:-translate-y-1 hover:shadow-lg hover:ring-slate-900/5"
+            >
+              <div className="text-xl font-semibold text-slate-900">{c.t}</div>
+              <p className="mt-2 text-slate-600">{c.d}</p>
+              <Link href={c.href} className="mt-4 inline-block text-slate-900 underline underline-offset-4">
+                Learn more
               </Link>
-            )}
-          </div>
-        ))}
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

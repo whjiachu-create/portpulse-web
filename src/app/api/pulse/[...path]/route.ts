@@ -1,74 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-type ParamsP = Promise<{ path: string[] }>;
+const BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.useportpulse.com";
+const DEMO = process.env.NEXT_PUBLIC_DEMO_API_KEY || "dev_demo_123";
 
-const UPSTREAM = process.env.NEXT_PUBLIC_API_UPSTREAM || "https://api.useportpulse.com";
-
-function corsHeaders() {
-  return {
-    "access-control-allow-origin": "*",
-    "access-control-allow-methods": "GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS",
-    "access-control-allow-headers": "Content-Type, X-API-Key, If-None-Match",
-  };
-}
-
-async function proxy(req: NextRequest, paramsP: ParamsP): Promise<Response> {
-  const { path } = await paramsP;
-  const u = new URL(req.url);
-  const rest = "/" + (path ?? []).join("/");
-  const target = new URL(rest + (u.search || ""), UPSTREAM);
-
-  // 透传必要头
-  const headers = new Headers();
-  const copyHeaders = ["content-type", "x-api-key", "if-none-match"];
-  copyHeaders.forEach((k) => {
-    const v = req.headers.get(k);
-    if (v) headers.set(k, v);
+async function proxy(req: NextRequest, path: string[]) {
+  const url = new URL(`${BASE}/${path.join("/")}`);
+  // 透传查询参数
+  req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
+  const res = await fetch(url.toString(), {
+    headers: { Authorization: `Bearer ${DEMO}` },
+    // 适度缓存以减小抖动（5 分钟）
+    next: { revalidate: 300 },
   });
-
-  // 发起上游请求
-  try {
-    const r = await fetch(target, {
-      method: req.method,
-      headers,
-      body: req.method === "GET" || req.method === "HEAD" ? undefined : await req.blob(),
-      cache: "no-store",
-      redirect: "manual",
-    });
-
-    // 透传响应 & ETag
-    const out = new NextResponse(r.body, {
-      status: r.status,
-      headers: r.headers,
-    });
-    Object.entries(corsHeaders()).forEach(([k, v]) => out.headers.set(k, v));
-    return out;
-  } catch (err) {
-    return NextResponse.json(
-      { ok: false, error: "proxy_fetch_failed", hint: String(err) },
-      { status: 502, headers: corsHeaders() }
-    );
-  }
+  return new Response(res.body, {
+    status: res.status,
+    headers: {
+      "content-type": res.headers.get("content-type") ?? "application/json",
+      "cache-control": res.headers.get("cache-control") ?? "public, max-age=300",
+    },
+  });
 }
 
-export async function GET(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export async function HEAD(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export async function POST(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export async function PUT(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export async function PATCH(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export async function DELETE(req: NextRequest, ctx: { params: ParamsP }) {
-  return proxy(req, ctx.params);
-}
-export function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+export async function GET(req: NextRequest, { params }: { params: { path: string[] } }) {
+  return proxy(req, params.path);
 }

@@ -7,20 +7,19 @@ import type { Topology, GeometryCollection } from "topojson-specification";
 
 const WORLD_TOPO = "https://unpkg.com/world-atlas@2/countries-110m.json";
 const DEMO_PORTS = [
-  { code: "USLAX", coord: [-118.264, 33.732] },
-  { code: "USLGB", coord: [-118.215, 33.767] },
-  { code: "SGSIN", coord: [103.75, 1.26] },
-  { code: "CNSHA", coord: [121.5, 31.3] },
-  { code: "NLRTM", coord: [4.48, 51.95] },
-  { code: "DEHAM", coord: [9.97, 53.54] },
+  { code: "USLAX", name: "Los Angeles", coord: [-118.264, 33.732] },
+  { code: "USLGB", name: "Long Beach", coord: [-118.215, 33.767] },
+  { code: "SGSIN", name: "Singapore", coord: [103.75, 1.26] },
+  { code: "CNSHA", name: "Shanghai", coord: [121.5, 31.3] },
+  { code: "NLRTM", name: "Rotterdam", coord: [4.48, 51.95] },
+  { code: "DEHAM", name: "Hamburg", coord: [9.97, 53.54] },
 ];
 
 type CountriesTopo = Topology & { objects: { countries: GeometryCollection } };
 
-export default function D3WorldPortsMap() {
+export default function WorldPortsMap() {
   const [paths, setPaths] = useState<string[]>([]);
   const [points, setPoints] = useState<Array<{ code: string; x: number; y: number }>>([]);
-
   const width = 720;
   const height = 380;
 
@@ -31,24 +30,24 @@ export default function D3WorldPortsMap() {
   const pathGen = useMemo(() => geoPath(projection), [projection]);
 
   useEffect(() => {
-    async function loadFrom(url: string) {
-      const res = await fetch(url, { cache: "force-cache" });
-      const world = (await res.json()) as CountriesTopo;
-      const countries = feature(world, world.objects.countries) as FeatureCollection<Geometry, GeoJsonProperties>;
-      const ps = (countries.features ?? []).map((f: Feature<Geometry, GeoJsonProperties>) => pathGen(f as unknown as GeoPermissibleObjects) ?? "");
-      setPaths(ps);
-    }
-    (async () => {
-      try { await loadFrom(WORLD_TOPO); }
-      catch {
-        try { await loadFrom("/world-110m.json"); } catch { setPaths([]); }
+    async function load() {
+      async function loadFrom(url: string) {
+        const res = await fetch(url, { cache: "force-cache" });
+        const world = (await res.json()) as CountriesTopo;
+        const countries = feature(world, world.objects.countries) as FeatureCollection<Geometry, GeoJsonProperties>;
+        const ps = (countries.features ?? []).map(
+          (f: Feature<Geometry, GeoJsonProperties>) => pathGen(f as unknown as GeoPermissibleObjects) ?? ""
+        );
+        setPaths(ps);
       }
+      try { await loadFrom(WORLD_TOPO); } catch { try { await loadFrom("/world-110m.json"); } catch { setPaths([]); } }
       const pts = DEMO_PORTS.map((p) => {
         const xy = projection(p.coord as [number, number]);
         return xy ? { code: p.code, x: xy[0], y: xy[1] } : null;
       }).filter((v): v is { code: string; x: number; y: number } => v !== null);
       setPoints(pts);
-    })();
+    }
+    load();
   }, [pathGen, projection]);
 
   return (

@@ -1,24 +1,24 @@
+// src/components/TrustBar.tsx
 "use client";
-import Image from "next/image";
 
-const LOGOS = [
-  { src: "/logos/placeholder-dark.svg", alt: "Partner A" },
-  { src: "/logos/placeholder-dark.svg", alt: "Partner B" },
-  { src: "/logos/placeholder-dark.svg", alt: "Partner C" },
-  { src: "/logos/placeholder-dark.svg", alt: "Partner D" },
-  { src: "/logos/placeholder-dark.svg", alt: "Partner E" },
-];
+const brands = ["ACME", "OCEANIC", "FREIGHT.IO", "NEXLOG", "PORTNET", "CARGO AI"];
 
 export default function TrustBar() {
-  return (
-    <section className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-8">
-      <div className="rounded-xl border bg-white/80 backdrop-blur p-4">
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-80">
-          {LOGOS.map((l, i) => (
-            <Image key={i} src={l.src} alt={l.alt} width={120} height={28} className="h-6 w-auto" />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
+    return (
+        <section className="bg-white">
+            <div className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-8">
+                <div className="text-xs font-medium text-slate-500 mb-3">ECOSYSTEM & TOOLING</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+                    {brands.map((b) => (
+                        <div
+                            key={b}
+                            className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-center text-[12px] text-slate-600 shadow-sm"
+                        >
+                            {b}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </section>
+    );
 }

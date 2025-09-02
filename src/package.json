@@ -1,0 +1,30 @@
+{
+    "engines": {
+        "node": ">=18",
+        "npm": ">=9"
+    },
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint",
+        "typecheck": "tsc --noEmit",
+        "precommit:scan-zh": "grep -R --line-number -E \"[\\u4e00-\\u9fa5]\" src || echo \"No Chinese text found ✓\"",
+        "prepare": "husky install"
+    },
+    "lint-staged": {
+        "*.{ts,tsx,js,jsx}": [
+            "next lint --max-warnings=0 --fix",
+            "prettier --write"
+        ],
+        "*": [
+            "npm run precommit:scan-zh"
+        ]
+    },
+    "devDependencies": {
+        "husky": "^9.0.0",
+        "lint-staged": "^15.0.0",
+        "prettier": "^3.2.5",
+        "typescript": "^5.4.0"
+    }
+}

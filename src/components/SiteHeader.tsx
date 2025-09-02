@@ -1,41 +1,99 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 
 export default function SiteHeader() {
   return (
-    <>
-      <div className="w-full bg-slate-50 text-slate-700 text-[13px] border-b">
-        <div className="mx-auto max-w-7xl px-4 py-1.5 flex items-center gap-3 justify-center sm:justify-between">
-          <div className="hidden sm:block">
-            Public Beta is live.{" "}
-            <Link href="/docs/quickstart" className="underline underline-offset-4 hover:text-slate-900">Read the Quickstart →</Link>
-          </div>
-          <div className="space-x-3">
-            <Link href="/pricing" className="underline underline-offset-4 hover:text-slate-900">See pricing</Link>
-          </div>
+    <header className="sticky top-0 z-40 w-full border-b border-slate-200/60 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+        {/* Brand */}
+        <div className="flex items-center gap-3">
+          <Link href="/" className="inline-flex items-center gap-2">
+            <Image
+              src="/logos/placeholder-light.svg"
+              alt="PortPulse"
+              width={120}
+              height={22}
+              className="h-[22px] w-auto"
+              priority
+            />
+          </Link>
+          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700">
+            Public Beta
+          </span>
+        </div>
+
+        {/* Nav */}
+        <nav className="hidden items-center gap-5 text-sm md:flex">
+          <Link href="/pricing" className="text-slate-700 hover:text-slate-900">
+            Product
+          </Link>
+          <Link href="/pricing" className="text-slate-700 hover:text-slate-900">
+            Pricing
+          </Link>
+          <Link href="/contact" className="text-slate-700 hover:text-slate-900">
+            Contact
+          </Link>
+
+          <a
+            href="https://docs.useportpulse.com/openapi.json"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-slate-700 hover:text-slate-900"
+          >
+            OpenAPI
+          </a>
+          <a
+            href="https://docs.useportpulse.com/EXAMPLES.md"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-slate-700 hover:text-slate-900"
+          >
+            Quickstart
+          </a>
+          <a
+            href="https://docs.useportpulse.com/SDK.md"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-slate-700 hover:text-slate-900"
+          >
+            SDK Samples
+          </a>
+          <a
+            href="https://docs.useportpulse.com/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-slate-700 hover:text-slate-900"
+          >
+            Docs
+          </a>
+          <a
+            href="https://status.useportpulse.com/"
+            target="_blank"
+            rel="noreferrer noopener"
+            className="text-slate-700 hover:text-slate-900"
+          >
+            Status
+          </a>
+        </nav>
+
+        {/* CTAs */}
+        <div className="flex items-center gap-2">
+          <Link
+            href="/pricing"
+            className="hidden rounded-md border border-slate-300 px-3 py-1.5 text-sm text-slate-800 hover:bg-slate-50 md:inline-flex"
+          >
+            Start free
+          </Link>
+          <Link
+            href="/contact"
+            className="inline-flex rounded-md bg-slate-900 px-3 py-1.5 text-sm text-white hover:bg-slate-800"
+          >
+            Talk to sales
+          </Link>
         </div>
       </div>
-
-      <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-4">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logos/placeholder-light.svg" alt="PortPulse" width={120} height={24} />
-          </Link>
-          <nav className="hidden md:flex items-center gap-5 text-sm text-slate-700">
-            <Link href="/#product" className="hover:text-slate-900">Product</Link>
-            <Link href="/pricing" className="hover:text-slate-900">Pricing</Link>
-            <Link href="/contact" className="hover:text-slate-900">Contact</Link>
-            <a href="https://docs.useportpulse.com/openapi.json" target="_blank" rel="noreferrer noopener" className="hover:text-slate-900">OpenAPI</a>
-            <a href="https://docs.useportpulse.com/EXAMPLES.md" target="_blank" rel="noreferrer noopener" className="hover:text-slate-900">Quickstart</a>
-            <a href="https://docs.useportpulse.com/SDK.md" target="_blank" rel="noreferrer noopener" className="hover:text-slate-900">SDK Samples</a>
-            <a href="https://status.useportpulse.com/" target="_blank" rel="noreferrer noopener" className="hover:text-slate-900">Status</a>
-          </nav>
-          <div className="flex items-center gap-2">
-            <a href="https://docs.useportpulse.com/EXAMPLES.md" target="_blank" rel="noreferrer noopener" className="rounded-md border px-3 py-1.5 text-sm">Start free</a>
-            <Link href="/contact" className="rounded-md bg-slate-900 text-white px-3 py-1.5 text-sm">Talk to sales</Link>
-          </div>
-        </div>
-      </header>
-    </>
+    </header>
   );
 }
