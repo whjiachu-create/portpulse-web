@@ -1,3 +1,4 @@
+import Analytics from "@/components/Analytics";
 import "./globals.css";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -144,7 +145,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </div>
           <div className="text-center text-xs text-slate-500 pb-8">© {new Date().getFullYear()} PortPulse. All rights reserved.</div>
         </footer>
-      </body>
+        <Analytics />
+    </body>
     </html>
   );
 }
