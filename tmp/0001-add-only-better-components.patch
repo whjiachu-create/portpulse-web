@@ -1,0 +1,149 @@
+diff --git a/src/components/Solutions.tsx b/src/components/Solutions.tsx
+new file mode 100644
+--- /dev/null
++++ b/src/components/Solutions.tsx
+@@ -0,0 +1,48 @@
++export default function Solutions() {
++  const items = [
++    { title: "Container & Port Tracking", desc: "Unified events and port snapshots via API." },
++    { title: "Predictive ETAs & Alerts", desc: "Actionable exceptions with reasons." },
++    { title: "Port Congestion & Dwell", desc: "Plan with reliable waiting time signals." },
++    { title: "Terminal Events & APIs", desc: "Import/export milestones in one schema." },
++  ];
++  return (
++    <section aria-labelledby="solutions" className="mt-10">
++      <h2 id="solutions" className="text-2xl font-semibold tracking-tight">Solutions</h2>
++      <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
++        {items.map((it) => (
++          <article key={it.title} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
++            <h3 className="text-lg font-medium">{it.title}</h3>
++            <p className="mt-2 text-sm text-slate-600">{it.desc}</p>
++          </article>
++        ))}
++      </div>
++    </section>
++  );
++}
+diff --git a/src/components/StatsBar.tsx b/src/components/StatsBar.tsx
+new file mode 100644
+--- /dev/null
++++ b/src/components/StatsBar.tsx
+@@ -0,0 +1,27 @@
++export default function StatsBar() {
++  const stats = [
++    { k: "67+ ports", v: "today" },
++    { k: "p95 < 300ms", v: "API latency" },
++    { k: "30-day replay", v: "history" },
++    { k: "SLA 99.9%", v: "Pro+" },
++  ];
++  return (
++    <section aria-label="Network stats" className="mt-8">
++      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-4">
++        {stats.map((s) => (
++          <div key={s.k} className="flex items-baseline justify-between rounded-xl bg-white p-4 shadow-sm">
++            <span className="text-base font-semibold">{s.k}</span>
++            <span className="text-xs text-slate-500">{s.v}</span>
++          </div>
++        ))}
++      </div>
++    </section>
++  );
++}
+diff --git a/src/components/StatusPillBetter.tsx b/src/components/StatusPillBetter.tsx
+new file mode 100644
+--- /dev/null
++++ b/src/components/StatusPillBetter.tsx
+@@ -0,0 +1,56 @@
++"use client";
++import { useEffect, useRef, useState } from "react";
++type Status = "online" | "degraded" | "offline";
++const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
++export default function StatusPillBetter() {
++  const [status, setStatus] = useState<Status>("online");
++  const timer = useRef<number | null>(null);
++  useEffect(() => {
++    let abort: AbortController | null = null;
++    const probe = async () => {
++      abort?.abort();
++      abort = new AbortController();
++      try {
++        const t0 = performance.now();
++        const res = await fetch(`${API_BASE}/v1/health`, { signal: abort.signal, cache: "no-store" });
++        const dt = performance.now() - t0;
++        if (!res.ok) throw new Error("bad");
++        setStatus(dt < 300 ? "online" : dt < 1200 ? "degraded" : "offline");
++      } catch {
++        setStatus("offline");
++      }
++    };
++    probe();
++    timer.current = window.setInterval(probe, 30_000);
++    return () => { if (timer.current) clearInterval(timer.current); abort?.abort(); };
++  }, []);
++  const cls = status === "online" ? "bg-emerald-600" : status === "degraded" ? "bg-amber-500" : "bg-rose-600";
++  const label = status === "online" ? "Online" : status === "degraded" ? "Degraded" : "Offline";
++  return (
++    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-white ${cls}`}>
++      <span className="h-2 w-2 rounded-full bg-white/90" />
++      <span className="text-sm">{label}</span>
++    </span>
++  );
++}
+diff --git a/app/pricing/_components/PricingFAQ.tsx b/app/pricing/_components/PricingFAQ.tsx
+new file mode 100644
+--- /dev/null
++++ b/app/pricing/_components/PricingFAQ.tsx
+@@ -0,0 +1,33 @@
++export default function PricingFAQ() {
++  const faqs = [
++    ["Do you offer refunds?", "Monthly plans can be cancelled anytime and stop next cycle billing. Annual plans follow fair-use terms; talk to us for prorated cases."],
++    ["What happens on overage?", "For v1 we auto-upgrade to the next tier to keep your jobs running. No surprise per-call fees."],
++    ["How is billing handled?", "Stripe in USD with Stripe Tax for VAT/GST. Invoices are emailed and downloadable from the portal."],
++    ["Is there a yearly discount?", "Yes — pay 10 months, get 12 months (applied at checkout)."],
++  ] as const;
++  return (
++    <section className="mt-12">
++      <h2 className="text-xl font-semibold">FAQ</h2>
++      <div className="mt-4 space-y-3">
++        {faqs.map(([q, a]) => (
++          <details key={q} className="group rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
++            <summary className="cursor-pointer list-none">
++              <span className="text-base font-medium">{q}</span>
++            </summary>
++            <p className="mt-3 text-sm text-slate-600">{a}</p>
++          </details>
++        ))}
++      </div>
++    </section>
++  );
++}
+diff --git a/app/contact/_components/BusinessEmailGuard.tsx b/app/contact/_components/BusinessEmailGuard.tsx
+new file mode 100644
+--- /dev/null
++++ b/app/contact/_components/BusinessEmailGuard.tsx
+@@ -0,0 +1,16 @@
++"use client";
++import { useMemo } from "react";
++const FREE_DOMAINS = /(gmail|yahoo|hotmail|outlook|live|icloud|qq|163|126)\./i;
++const ENABLED = process.env.NEXT_PUBLIC_REQUIRE_BIZ_EMAIL === "1";
++export function useBusinessEmailHint(email: string) {
++  return useMemo(() => {
++    if (!ENABLED) return null;
++    if (!email) return null;
++    return FREE_DOMAINS.test(email) ? "Please use a business email address." : null;
++  }, [email]);
++}
+diff --git a/scripts/scan-zh.sh b/scripts/scan-zh.sh
+new file mode 100755
+--- /dev/null
++++ b/scripts/scan-zh.sh
+@@ -0,0 +1,9 @@
++#!/usr/bin/env bash
++set -euo pipefail
++shopt -s globstar
++found=0
++grep -R -nP '[\x{4e00}-\x{9fff}]' --include='*.{ts,tsx,md,mdx}' app src || found=$?
++if [[ $found -eq 0 ]]; then
++  echo "Chinese chars found. Please remove before commit." >&2
++  exit 1
++fi

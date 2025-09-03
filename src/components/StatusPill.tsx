@@ -1,38 +1,35 @@
 "use client";
-import { useEffect, useState } from "react";
-
-type Props = { apiBase: string; intervalMs?: number };
-
-export default function StatusPill({ apiBase, intervalMs = 25_000 }: Props) {
-  const [status, setStatus] = useState<"online" | "degraded" | "offline">("offline");
-
+import { useEffect, useRef, useState } from "react";
+type Status = "online" | "degraded" | "offline";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+export default function StatusPill() {
+  const [status, setStatus] = useState<Status>("online");
+  const timer = useRef<number | null>(null);
   useEffect(() => {
-    let stop = false;
-    async function probe() {
+    let abort: AbortController | null = null;
+    const probe = async () => {
+      abort?.abort();
+      abort = new AbortController();
       try {
-        const r = await fetch(`${apiBase}/v1/health`, { cache: "no-store" });
-        if (stop) return;
-        setStatus(r.ok ? "online" : "degraded");
+        const t0 = performance.now();
+        const res = await fetch(`${API_BASE}/v1/health`, { signal: abort.signal, cache: "no-store" });
+        const dt = performance.now() - t0;
+        if (!res.ok) throw new Error("bad");
+        setStatus(dt < 300 ? "online" : dt < 1200 ? "degraded" : "offline");
       } catch {
-        if (!stop) setStatus("offline");
+        setStatus("offline");
       }
-    }
+    };
     probe();
-    const id = setInterval(probe, intervalMs);
-    return () => { stop = true; clearInterval(id); };
-  }, [apiBase, intervalMs]);
-
-  const cls =
-    status === "online"
-      ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
-      : status === "degraded"
-      ? "bg-amber-50 text-amber-800 ring-1 ring-amber-200"
-      : "bg-rose-50 text-rose-700 ring-1 ring-rose-200";
-
+    timer.current = window.setInterval(probe, 30_000);
+    return () => { if (timer.current) clearInterval(timer.current); abort?.abort(); };
+  }, []);
+  const cls = status === "online" ? "bg-emerald-600" : status === "degraded" ? "bg-amber-500" : "bg-rose-600";
+  const label = status === "online" ? "Online" : status === "degraded" ? "Degraded" : "Offline";
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs ${cls}`}>
-      <span className="size-2 rounded-full bg-current/70" />
-      Status: {status}
+    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-white ${cls}`}>
+      <span className="h-2 w-2 rounded-full bg-white/90" />
+      <span className="text-sm">{label}</span>
     </span>
   );
 }

@@ -1,0 +1,190 @@
+diff --git a/app/page.tsx b/app/page.tsx
+--- a/app/page.tsx
++++ b/app/page.tsx
+@@ -1,6 +1,27 @@
++import { Suspense } from "react";
++import dynamic from "next/dynamic";
++import Solutions from "@/components/Solutions";
++import StatsBar from "@/components/StatsBar";
++
++// 动态导入重组件（禁 SSR）并提供骨架
++const TrendMini = dynamic(() => import("@/components/TrendMini"), {
++  ssr: false,
++  loading: () => <div className="h-40 rounded-2xl border border-slate-200 animate-pulse" />,
++});
++// 你的地图组件如名为 D3WorldPortsMap，可把路径改成 "@/components/D3WorldPortsMap"
++const WorldPortsMap = dynamic(() => import("@/components/WorldPortsMap"), {
++  ssr: false,
++  loading: () => <div className="h-72 rounded-2xl border border-slate-200 animate-pulse" />,
++});
++
+ export default function Page() {
+   return (
+     <>
+       {/* Hero 保持你现有实现 */}
+-      {/* 其它内容 */}
++      <main className="container mx-auto px-4">
++        <Solutions />
++        <StatsBar />
++        <section className="mt-10 grid gap-6 md:grid-cols-2">
++          <Suspense fallback={<div className="h-40 rounded-2xl border animate-pulse" />}>
++            <TrendMini />
++          </Suspense>
++          <Suspense fallback={<div className="h-40 rounded-2xl border animate-pulse" />}>
++            <TrendMini />
++          </Suspense>
++        </section>
++        <section className="mt-10">
++          <Suspense fallback={<div className="h-72 rounded-2xl border animate-pulse" />}>
++            <WorldPortsMap />
++          </Suspense>
++        </section>
++      </main>
+     </>
+   );
+ }
+diff --git a/src/components/StatusPill.tsx b/src/components/StatusPill.tsx
+--- a/src/components/StatusPill.tsx
++++ b/src/components/StatusPill.tsx
+@@ -1,99 +1,56 @@
+-"use client";
+-// 旧实现（被替换）
++// 新实现：更稳的状态机与超时保护
++"use client";
++import { useEffect, useRef, useState } from "react";
++type Status = "online" | "degraded" | "offline";
++const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
++export default function StatusPill() {
++  const [status, setStatus] = useState<Status>("online");
++  const timer = useRef<number | null>(null);
++  useEffect(() => {
++    let abort: AbortController | null = null;
++    const probe = async () => {
++      abort?.abort();
++      abort = new AbortController();
++      try {
++        const t0 = performance.now();
++        const res = await fetch(`${API_BASE}/v1/health`, { signal: abort.signal, cache: "no-store" });
++        const dt = performance.now() - t0;
++        if (!res.ok) throw new Error("bad");
++        setStatus(dt < 300 ? "online" : dt < 1200 ? "degraded" : "offline");
++      } catch {
++        setStatus("offline");
++      }
++    };
++    probe();
++    timer.current = window.setInterval(probe, 30_000);
++    return () => { if (timer.current) clearInterval(timer.current); abort?.abort(); };
++  }, []);
++  const cls = status === "online" ? "bg-emerald-600" : status === "degraded" ? "bg-amber-500" : "bg-rose-600";
++  const label = status === "online" ? "Online" : status === "degraded" ? "Degraded" : "Offline";
++  return (
++    <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-white ${cls}`}>
++      <span className="h-2 w-2 rounded-full bg-white/90" />
++      <span className="text-sm">{label}</span>
++    </span>
++  );
++}
+diff --git a/app/pricing/page.tsx b/app/pricing/page.tsx
+--- a/app/pricing/page.tsx
++++ b/app/pricing/page.tsx
+@@ -1,6 +1,8 @@
++import PricingFAQ from "./_components/PricingFAQ";
+ export default function PricingPage() {
+   return (
+     <main className="container mx-auto px-4">
+       {/* 你现有的价格卡片保持 */}
++      <PricingFAQ />
+     </main>
+   );
+ }
+diff --git a/app/contact/_components/ContactForm.tsx b/app/contact/_components/ContactForm.tsx
+--- a/app/contact/_components/ContactForm.tsx
++++ b/app/contact/_components/ContactForm.tsx
+@@ -1,12 +1,28 @@
+ "use client";
+-import { useState } from "react";
++import { useState } from "react";
++import { useBusinessEmailHint } from "./BusinessEmailGuard";
+
+ export default function ContactForm() {
+-  const [email, setEmail] = useState("");
++  const [email, setEmail] = useState("");
++  const hint = useBusinessEmailHint(email);
+   return (
+     <form>
+       {/* 其它字段 */}
+-      <label className="block text-sm font-medium">Email</label>
++      <label className="block text-sm font-medium">Email</label>
+       <input
+         type="email"
+         value={email}
+         onChange={(e) => setEmail(e.target.value)}
+         className="mt-1 w-full rounded-xl border p-3"
+         required
+       />
++      {hint && <p className="mt-2 text-sm text-amber-600">{hint}</p>}
+       {/* Submit 按钮 */}
+     </form>
+   );
+ }
+diff --git a/app/layout.tsx b/app/layout.tsx
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -1,12 +1,41 @@
++import type { Metadata } from "next";
+ import "./globals.css";
+
++export const metadata: Metadata = {
++  metadataBase: new URL("https://useportpulse.com"),
++  title: { default: "PortPulse – Real-time port visibility", template: "%s – PortPulse" },
++  description: "Unified APIs for congestion, dwell, trends & alerts. Get running in 5 minutes.",
++  openGraph: {
++    type: "website",
++    url: "https://useportpulse.com",
++    title: "PortPulse – Real-time port visibility",
++    description: "APIs for trends, congestion, dwell, snapshots & alerts.",
++    images: [{ url: "/og/cover.png", width: 1200, height: 630 }],
++  },
++  twitter: {
++    card: "summary_large_image",
++    title: "PortPulse – Real-time port visibility",
++    description: "APIs for trends, congestion, dwell, snapshots & alerts.",
++    images: ["/og/cover.png"],
++  },
++  alternates: { canonical: "/" },
++};
++
+ export default function RootLayout({ children }: { children: React.ReactNode }) {
+   return (
+-    <html lang="en">
+-      <body>
+-        {children}
+-      </body>
++    <html lang="en" className="scroll-smooth">
++      <head>
++        <link rel="preconnect" href="https://api.useportpulse.com" crossOrigin="" />
++      </head>
++      <body className="bg-white text-slate-900 antialiased">
++        <a
++          href="#main"
++          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-3 focus:py-2 focus:shadow"
++        >
++          Skip to content
++        </a>
++        <main id="main">{children}</main>
++      </body>
+     </html>
+   );
+ }
+diff --git a/package.json b/package.json
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,14 @@
+ {
++  "engines": { "node": ">=18" },
+   "scripts": {
++    "scan:zh": "bash scripts/scan-zh.sh",
+     "lint": "next lint"
+   }
+ }

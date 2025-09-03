@@ -1,25 +1,19 @@
-// src/components/StatsBar.tsx
-"use client";
-
 export default function StatsBar() {
   const stats = [
-    ["67+", "ports"],
-    ["≤ 2h", "freshness (p95)"],
-    ["< 300 ms", "latency (p95)"],
-    ["JSON / CSV", "ETag / 304"],
-  ] as const;
-
+    { k: "67+ ports", v: "today" },
+    { k: "p95 < 300ms", v: "API latency" },
+    { k: "30-day replay", v: "history" },
+    { k: "SLA 99.9%", v: "Pro+" },
+  ];
   return (
-    <section className="bg-white">
-      <div className="mx-auto max-w-6xl px-4 md:px-6 lg:px-8 py-6">
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-          {stats.map(([v, k]) => (
-            <div key={k} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-center shadow-sm">
-              <div className="text-lg font-semibold text-slate-900">{v}</div>
-              <div className="text-xs text-slate-600">{k}</div>
-            </div>
-          ))}
-        </div>
+    <section aria-label="Network stats" className="mt-8">
+      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.k} className="flex items-baseline justify-between rounded-xl bg-white p-4 shadow-sm">
+            <span className="text-base font-semibold">{s.k}</span>
+            <span className="text-xs text-slate-500">{s.v}</span>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -39,7 +39,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="bg-[#F6F8FB] text-black antialiased">
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
