@@ -1,20 +1,9 @@
-<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <style>
-      .navy{ fill:#0B2740; }
-      .ocean{ stroke:#0EA5E9; }
-      .oceanFill{ fill:#E6F7FF; }
-      .pulse{ fill:#10B981; }
-    </style>
-  </defs>
-
-  <!-- outer ring -->
-  <circle cx="128" cy="128" r="118" fill="white" stroke="#0EA5E9" stroke-width="6"/>
-  <!-- P -->
-  <text x="62" y="156" class="navy" font-family="Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
-        font-size="130" font-weight="800">P</text>
-  <!-- wave -->
-  <path d="M48 182 Q 88 154 128 182 T 208 182"
-        class="ocean" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <circle cx="156" cy="174" r="9" class="pulse"/>
+<!-- PortPulse brand icon (unified): deep navy + cyan ring + 'P' + small wave -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <circle cx="128" cy="128" r="112" fill="#0B2740" stroke="#0EA5E9" stroke-width="16"/>
+  <!-- Stylized 'P' -->
+  <path fill="#FFFFFF" d="M96 64h44c24 0 40 16 40 36s-16 36-40 36h-20v56H96V64zm24 24v24h20c10 0 16-6 16-12 0-6-6-12-16-12h-20z"/>
+  <!-- subtle wave to hint maritime -->
+  <path fill="#0EA5E9" opacity=".9"
+        d="M64 168c18 12 38 18 64 18s46-6 64-18c-18 22-43 36-64 36s-46-14-64-36z"/>
 </svg>

@@ -5,7 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://useportpulse.com"),
-  title: "PortPulse — APIs for Port Operations",
+title: "PortPulse — APIs for Port Operations",
   description:
     "Port congestion, yard dwell, berth efficiency and momentum via unified APIs. JSON/CSV, freshness SLO, p95 < 300ms.",
   openGraph: {
@@ -26,30 +26,30 @@ export const metadata: Metadata = {
     images: ["/og.png"],
   },
   icons: { icon: "/icon.svg" },
+
 };
+
 
 export const viewport: Viewport = { themeColor: "#0B2740" };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/icon.svg" />
-      </head>
+  <head>
+    <link rel="preconnect" href="https://api.useportpulse.com" crossOrigin="" />
+    undefined
       <body className="bg-[#F6F8FB] text-black antialiased">
-        <script
-          type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "SoftwareApplication",
-              name: "PortPulse",
-              applicationCategory: "BusinessApplication",
-              offers: { "@type": "Offer", priceCurrency: "USD", price: "399", category: "subscription" },
-            }),
-          }}
-        />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify({
+      "@context":"https://schema.org",
+      "@type":"SoftwareApplication",
+      name:"PortPulse",
+      applicationCategory:"BusinessApplication",
+      offers:{ "@type":"Offer", priceCurrency:"USD", price:"399", category:"subscription" }
+    })}} />
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

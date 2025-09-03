@@ -16,7 +16,7 @@ export default function SiteHeader() {
             priority
           />
           <span className="font-semibold tracking-tight">
-            <span className="text-[22px] md:text-[24px] font-extrabold leading-none tracking-tight">Port<span className="text-[#26B1FF]">Pulse</span></span>
+            Port<span className="text-[#26B1FF]">Pulse</span>
           </span>
         </Link>
 

@@ -1,0 +1,20 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .navy{ fill:#0B2740; }
+      .ocean{ stroke:#0EA5E9; }
+      .oceanFill{ fill:#E6F7FF; }
+      .pulse{ fill:#10B981; }
+    </style>
+  </defs>
+
+  <!-- outer ring -->
+  <circle cx="128" cy="128" r="118" fill="white" stroke="#0EA5E9" stroke-width="6"/>
+  <!-- P -->
+  <text x="62" y="156" class="navy" font-family="Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif"
+        font-size="130" font-weight="800">P</text>
+  <!-- wave -->
+  <path d="M48 182 Q 88 154 128 182 T 208 182"
+        class="ocean" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="156" cy="174" r="9" class="pulse"/>
+</svg>

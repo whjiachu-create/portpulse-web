@@ -1,0 +1,44 @@
+diff --git a/src/app/page.tsx b/src/app/page.tsx
+--- a/src/app/page.tsx
++++ b/src/app/page.tsx
+@@ -28,12 +28,12 @@ export default function HomePage() {
+         />
+         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+         <div className="relative container mx-auto px-4 py-20 md:py-24 text-white max-w-4xl">
+-          <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
+-            Plan with port-level truth
+-          </h1>
+-          <p className="mt-3 text-white/90 max-w-2xl">
+-            50+ ports covered. Congestion and momentum in standardized JSON/CSV with freshness SLO. p95 latency ≤ 300ms.
+-          </p>
++          <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
++            Port-level truth you can build on
++          </h1>
++          <p className="mt-3 text-white/90 max-w-2xl">
++            Standardized JSON/CSV you can cache and audit. Freshness SLO (p95 ≤ 2h), API p95 ≤ 300ms, 30-day replay.
++          </p>
+           <div className="mt-6 flex flex-wrap gap-3">
+             <a href="/pricing" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition shadow">
+               Start 14-day evaluation
+diff --git a/src/components/home/HeroEN.tsx b/src/components/home/HeroEN.tsx
+--- a/src/components/home/HeroEN.tsx
++++ b/src/components/home/HeroEN.tsx
+@@ -5,12 +5,12 @@ export default function HeroEN(){
+   return (
+     <section className="container mx-auto px-4 py-14">
+       <div className="max-w-3xl">
+-        <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">
+-          Turn port congestion & trade momentum into reproducible data.
+-        </h1>
+-        <p className="mt-4 text-black/70">
+-          Standardized JSON/CSV, cache-friendly and auditable. Freshness p95 ≤ 2h, API p95 ≤ 300ms, 30-day replay.
+-        </p>
++        <h1 className="text-3xl md:text-5xl font-semibold tracking-tight">
++          Port-level truth you can build on
++        </h1>
++        <p className="mt-4 text-black/70">
++          Standardized JSON/CSV you can cache and audit. Freshness SLO (p95 ≤ 2h), API p95 ≤ 300ms, 30-day replay.
++        </p>
+         <div className="mt-5 flex flex-wrap gap-2">
+           {["50+ ports","Freshness p95 ≤ 2h","API p95 ≤ 300ms","30-day replay","CSV ETag/304"].map(s=>(
+             <span key={s} className="chip">{s}</span>
