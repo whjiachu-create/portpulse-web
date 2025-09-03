@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPost, posts } from "@/content/posts";
@@ -23,7 +24,7 @@ export default function BlogPost({ params }: { params: { slug: string } }) {
   if (!p) return notFound();
   return (
     <main className="container mx-auto px-4 py-10">
-      <a href="/blog" className="text-sm text-black/60 hover:text-black">← Back to blog</a>
+      <Link href="/blog" className="text-sm text-black/60 hover:text-black">← Back to blog</Link>
       <h1 className="text-2xl font-semibold mt-2">{p.title}</h1>
       <div className="text-xs text-black/50">{p.date}</div>
       <p className="text-black/70 mt-4">{p.summary}</p>

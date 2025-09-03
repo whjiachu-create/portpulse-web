@@ -1,3 +1,4 @@
+import Link from "next/link";
 export const dynamic = "force-static";
 import { posts } from "@/content/posts";
 
@@ -10,9 +11,9 @@ export default function BlogIndex() {
         {posts.map((p) => (
           <article key={p.slug} className="card p-5">
             <div className="text-xs text-black/50">{p.date}</div>
-            <a href={`/blog/${p.slug}`} className="block text-lg font-medium mt-1 hover:underline">
+            <Link href={`/blog/`} className="block text-lg font-medium mt-1 hover:underline">
               {p.title}
-            </a>
+            </Link>
             <p className="text-sm text-black/70 mt-2">{p.summary}</p>
           </article>
         ))}
