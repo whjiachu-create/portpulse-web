@@ -1,0 +1,31 @@
+/* unified card shadow + hover float + light glass */
+.shadow-floating{
+  box-shadow: 0 10px 30px rgba(0,0,0,.18), 0 6px 12px rgba(0,0,0,.08);
+  border-radius: 16px;
+  transition: transform .18s ease, box-shadow .18s ease;
+  will-change: transform;
+}
+.shadow-floating:hover{ transform: translateY(-2px); }
+.glass-bg{
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(17,24,39,.18);
+  border: 1px solid rgba(255,255,255,.18);
+}
+/* gallery placeholders */
+.gallery-ph{
+  border-radius: 16px;
+  background: rgba(226,232,240,.4);
+  border: 1px solid rgba(255,255,255,.12);
+  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+  position: relative;
+  overflow: hidden;
+}
+.gallery-ph::after{
+  content:"";
+  position:absolute; inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);
+  background-size:200% 100%;
+  animation:shimmer 1.4s infinite;
+}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}

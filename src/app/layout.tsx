@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import GalleryPortal from "@/components/GalleryPortal";
+
+import "./ui-enhance.css";
+
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 
@@ -52,6 +56,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />
+      
+        <Script id="hero-pill-cleanup" strategy="afterInteractive">{`(function(){try{if(typeof location==='undefined'||location.pathname!=='/')return;var P=[/50\+\s*ports/i,/freshness\s*p95/i,/api\s*p95/i,/30-?day\s*replay/i,/csv\s*etag\/?304/i,/talk\s*to\s*sales/i],H=[/Ports\s*covered/i,/Freshness\s*$begin:math:text$p95\$end:math:text$/i,/API\s*latency\s*$begin:math:text$p95\$end:math:text$/i];function run(){var R=0;Array.from(document.querySelectorAll('a,button,span,div,li')).forEach(function(el){var t=(el.textContent||'').trim();if(!t)return;for(var i=0;i<P.length;i++){if(P[i].test(t)){var n=el.closest('a,button,span,div,li');if(n&&n.parentElement){n.remove();R++}break}}});Array.from(document.querySelectorAll('div,section,article,li,h3,h4,span')).forEach(function(el){var t=(el.textContent||'').trim();if(!t)return;for(var j=0;j<H.length;j++){if(H[j].test(t)){var card=el.closest('div,section,article,li');if(card){card.classList.add('shadow-floating','glass-bg')}break}}});console.info('[PortPulse] removed',R,'pill(s)')}document.readyState==='loading'?document.addEventListener('DOMContentLoaded',run,{once:true}):setTimeout(run,0)}catch(e){console.warn('[PortPulse] pill cleanup failed',e)}})();`}</Script>
+        <GalleryPortal />
       </body>
     </html>
   );
