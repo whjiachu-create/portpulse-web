@@ -26,7 +26,7 @@ export default function SiteHeader() {
           <Link href="/methods" className="hover:text-black/70">Data & Methods</Link>
           <Link href="/pricing" className="hover:text-black/70">Pricing</Link>
           <Link href="/docs/api" className="hover:text-black/70">Docs</Link>
-          <Link href="/contact" className="hover:text-black/70">Contact</Link>
+          <Link href="/blog" className="hover:text-black/70">Blog</Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
