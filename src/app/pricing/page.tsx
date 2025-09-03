@@ -1,3 +1,4 @@
+import PricingFAQ from "./_components/PricingFAQ";
 import PricingTable from "@/components/PricingTable";
 
 export const metadata = {
@@ -65,7 +66,8 @@ export default function PricingPage() {
           }),
         }}
       />
-    </main>
+      <PricingFAQ />
+</main>
   );
 }
 
