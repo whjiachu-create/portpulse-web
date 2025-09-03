@@ -1,45 +1,91 @@
 @import "tailwindcss";
 
 /* 主题与细节 */
-:root{
-  --night:#0B2740;
+:root {
+  --night: #0B2740;
 }
-.bg-night{ background-color: var(--night); }
+
+.bg-night {
+  background-color: var(--night);
+}
 
 /* 卡片通用：圆角+边框+轻阴影+悬浮抬升 */
 .card {
   @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition;
 }
-.card:hover { @apply -translate-y-0.5 shadow-md; }
+
+.card:hover {
+  @apply -translate-y-0.5 shadow-md;
+}
 
 /* 细分割线/描边 */
-.thin-outline { outline:1px solid rgba(226,232,240,.6); outline-offset:-1px; }
+.thin-outline {
+  outline: 1px solid rgba(226, 232, 240, .6);
+  outline-offset: -1px;
+}
 
 /* 地图海色 */
-.sea-fill { fill: url(#sea); }
+.sea-fill {
+  fill: url(#sea);
+}
 
 /* 端口“脉冲”动效（纯 CSS） */
-.pp-pulse { transform-origin:center; }
-@keyframes pp-ping {
-  0%   { r:2; opacity:.9; }
-  70%  { r:10; opacity:0; }
-  100% { r:10; opacity:0; }
+.pp-pulse {
+  transform-origin: center;
 }
-.pp-pulse { animation: pp-ping 1.8s cubic-bezier(0,0,.2,1) infinite; }
+
+@keyframes pp-ping {
+  0% {
+    r: 2;
+    opacity: .9;
+  }
+
+  70% {
+    r: 10;
+    opacity: 0;
+  }
+
+  100% {
+    r: 10;
+    opacity: 0;
+  }
+}
+
+.pp-pulse {
+  animation: pp-ping 1.8s cubic-bezier(0, 0, .2, 1) infinite;
+}
 
 /* 浮动工具条小胶囊 */
-.pill { @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs; }
+.pill {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs;
+}
 
 /* ==== PortPulse Theme Tokens ==== */
-:root{
-  --brand-primary:#0B2740;   /* deep navy */
-  --brand-accent:#26B1FF;    /* ocean blue */
-  --bg-soft:#F7FBFF;         /* very light blue */
-  --bg-muted:#F3F6F8;        /* soft gray */
+:root {
+  --brand-primary: #0B2740;
+  /* deep navy */
+  --brand-accent: #26B1FF;
+  /* ocean blue */
+  --bg-soft: #F7FBFF;
+  /* very light blue */
+  --bg-muted: #F3F6F8;
+  /* soft gray */
 }
-.section-soft{ background:var(--bg-soft); }
-.section-muted{ background:var(--bg-muted); }
+
+.section-soft {
+  background: var(--bg-soft);
+}
+
+.section-muted {
+  background: var(--bg-muted);
+}
+
 /* subtle card shadow */
-.card{ @apply rounded-2xl border border-black/10 bg-white shadow-sm; }
+.card {
+  @apply rounded-2xl border border-black/10 bg-white shadow-sm;
+}
+
 /* accent ring helper */
-.ring-accent{ box-shadow:0 0 0 2px var(--brand-accent) inset; }
+.ring-accent {
+  box-shadow: 0 0 0 2px var(--brand-accent) inset;
+}
