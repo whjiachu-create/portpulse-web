@@ -14,7 +14,7 @@ export const dynamic = "force-static";
 export default function HomePage() {
   return (
     <main className="bg-white">
-      {/* HERO (image background at top; copy updated; image unchanged) */}
+      {/* HERO （顶图保留；文案与按钮区精简） */}
       <section className="relative min-h-[90vh] grid place-items-center">
         <Image
           src="/images/hero-port.jpg"
@@ -26,6 +26,7 @@ export default function HomePage() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+
         <div className="relative container mx-auto px-4 py-20 md:py-24 text-white max-w-4xl">
           <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
             Turn port congestion & trade momentum into reproducible data.
@@ -34,27 +35,19 @@ export default function HomePage() {
             Standardized JSON/CSV, cache-friendly and auditable. Freshness p95 ≤ 2h, API p95 ≤ 300ms, 30-day replay.
           </p>
 
-          {/* chips */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            {["50+ ports","Freshness p95 ≤ 2h","API p95 ≤ 300ms","30-day replay","CSV ETag/304"].map((s)=>(
-              <span key={s} className="pill bg-white/10 border border-white/20 text-white">{s}</span>
-            ))}
-          </div>
+          {/* chips —— 已删除 */}
 
-          {/* CTAs */}
+          {/* CTAs —— 仅保留主 CTA */}
           <div className="mt-6 flex flex-wrap gap-3">
-            <a href="/pricing" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition shadow">
+            <a
+              href="/pricing"
+              className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition shadow"
+            >
               Start 14-day evaluation
             </a>
-            <a href="/docs/api" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
-              Docs (OpenAPI)
-            </a>
-            <a href="/contact?intent=sales" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
-              Talk to sales
-            </a>
           </div>
 
-          {/* trust badges */}
+          {/* trust badges（保留） */}
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl">
             <Badge label="Ports covered" value="50+" />
             <Badge label="Freshness (p95)" value="≤ 2h" />
@@ -124,7 +117,7 @@ export default function HomePage() {
             <a href="/docs/api" className="text-sm underline text-[#0B2740]">Open docs</a>
           </div>
           <div className="mt-4">
-            <PortComparator ports={["USLAX","USNYC","SGSIN","CNSHA","CNNGB","HKHKG","NLRTM","BEANR"]} days={14} />
+            <PortComparator ports={["USLAX", "USNYC", "SGSIN", "CNSHA", "CNNGB", "HKHKG", "NLRTM", "BEANR"]} days={14} />
           </div>
         </div>
       </section>
@@ -160,7 +153,7 @@ export default function HomePage() {
   );
 }
 
-function Badge({label, value}:{label:string; value:string}) {
+function Badge({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white/10 backdrop-blur border border-white/20 px-4 py-2 shadow-sm">
       <div className="text-xs text-white/80">{label}</div>
