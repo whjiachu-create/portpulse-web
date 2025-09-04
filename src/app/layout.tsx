@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import GalleryPortal from "@/components/GalleryPortal";
+import Script from "next/script";
 
 import "./ui-enhance.css";
 
