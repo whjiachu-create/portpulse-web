@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 轻量的共用样式，与我们项目一致 */
+.pill{ @apply inline-flex items-center rounded-full px-3 py-1 text-sm; }
+.glass-bg{ @apply bg-white/60 backdrop-blur; }

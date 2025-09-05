@@ -20,3 +20,5 @@ scripts/smoke.sh.save
 portpulse-site/
 node_modules/
 .next/
+.vercel/
+.env.local
