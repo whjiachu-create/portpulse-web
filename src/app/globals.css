@@ -1,0 +1,4 @@
+:root { --pp-bg: #F6F8FB; --pp-ink:#0B2740; }
+html,body { height:100%; }
+body { background: var(--pp-bg); color:#111827; }
+.pill{ display:inline-flex; align-items:center; gap:.25rem; padding:.375rem .625rem; border-radius:999px; font-size:.8125rem; }
