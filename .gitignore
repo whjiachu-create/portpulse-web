@@ -11,3 +11,7 @@ out
 
 # misc
 .DS_Store
+node_modules/
+.next/
+.vercel/
+.env.local
