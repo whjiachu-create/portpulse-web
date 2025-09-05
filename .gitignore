@@ -18,3 +18,5 @@ portpulse-site/
 logs/*.log
 scripts/smoke.sh.save
 portpulse-site/
+node_modules/
+.next/
