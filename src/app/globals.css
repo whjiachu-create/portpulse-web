@@ -89,3 +89,68 @@
 .ring-accent {
   box-shadow: 0 0 0 2px var(--brand-accent) inset;
 }
+/* ==== Unified Cards & Pills (floating) ==== */
+.card { 
+  @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition-transform duration-200;
+}
+.card:hover { 
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(2, 8, 23, 0.08);
+}
+.pill { 
+  @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs border border-slate-200 bg-white;
+}
+
+/* stronger floating */
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px rgba(2, 8, 23, 0.10);
+}
+
+/* subtle lift on hover for glass cards in hero */
+@media (hover:hover) {
+  .backdrop-blur-md:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px rgba(2,8,23,0.18);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+}
+
+/* === Floating cards for FAQ / feature tiles === */
+.card-floating { @apply rounded-2xl border border-slate-200 bg-white shadow-sm transition will-change-transform; }
+.card-floating:hover { @apply -translate-y-0.5 shadow-md; }
+.faq-grid { @apply grid gap-3; }
+.faq-title { @apply text-lg font-medium; }
+.faq-body  { @apply mt-2 text-sm text-slate-600 leading-6; }
+
+/* --- Fix: kill leftover pseudo bubble on header CTA --- */
+[data-cta="start-free"]::before,
+[data-cta="start-free"]::after {
+  content: none !important;
+}
+
+/* Floating cards */
+.shadow-floating { box-shadow: 0 8px 30px rgba(2, 8, 23, 0.12), 0 2px 6px rgba(2, 8, 23, 0.06); border-radius: 1rem; }
+
+/* ===== Header CTA: kill legacy bubble completely ===== */
+a[data-cta="start-free"] { position: relative; padding-left: 1rem !important; }
+a[data-cta="start-free"]::before,
+a[data-cta="start-free"]::after { content: none !important; display: none !important; }
+/* 有些版本用子 span/svg 画“白色胶囊”，一锅端 */
+a[data-cta="start-free"] > span:first-child,
+a[data-cta="start-free"] > svg:first-child,
+a[data-cta="start-free"] > i:first-child { display: none !important; }
+
+/* === Glass KPIs (lighter & more transparent) === */
+.glass-kpi { 
+  backdrop-filter: saturate(140%) blur(10px);
+  background: rgba(255,255,255,0.06); /* 更透明 */
+  border: 1px solid rgba(255,255,255,0.18);
+}
+.shadow-floating { 
+  box-shadow: 0 12px 38px rgba(2,8,23,0.18), 0 2px 8px rgba(2,8,23,0.10);
+}
+
+/* fix-start-free-pseudo: kill leftover pseudo bubble on header CTA */
+[data-cta="start-free"]::before,
+[data-cta="start-free"]::after { content: none !important; display: none !important; }

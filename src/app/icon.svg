@@ -1,10 +1,21 @@
+<!-- src/app/icon.svg -->
 <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PortPulse">
   <defs>
     <style>.p{font:900 120px/1 Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}</style>
   </defs>
+
+  <!-- 背景圆：改为品牌海军蓝，提高对比度 -->
   <circle cx="128" cy="128" r="120" fill="#0B2740"/>
+
+  <!-- 外圈描边：品牌青蓝 -->
   <circle cx="128" cy="128" r="118" fill="none" stroke="#0EA5E9" stroke-width="12"/>
+
+  <!-- 字母P：改为白色，适配深底 -->
   <text x="84" y="158" fill="#FFFFFF" class="p">P</text>
+
+  <!-- 波浪：保持亮青蓝，深底上对比更强 -->
   <path d="M44 186 Q 90 156 128 186 T 212 186" fill="none" stroke="#08A6E4" stroke-linecap="round" stroke-width="20"/>
+
+  <!-- 绿点：保持不变 -->
   <circle cx="156" cy="178" r="14" fill="#10B981"/>
 </svg>

@@ -11,9 +11,12 @@ const nextConfig: NextConfig = {
   experimental: {
     // 预先允许本机与局域网调试来源，避免将来版本报错
     allowedDevOrigins: ["http://localhost:3001","http://127.0.0.1:3001","http://192.168.0.100:3001"],
-  },
+  ,
+    allowedDevOrigins: ["http://192.168.3.18:3000"] },
 };
 
+  ,experimental:{allowedDevOrigins:["http://192.168.3.18:3000","http://localhost:3000"]}
+};
 export default nextConfig;
 
 

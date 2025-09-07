@@ -1,0 +1,117 @@
+import HeroKPI from "@/components/home/HeroKPI";
+import ClientWidgetsHome from "@/components/home/ClientWidgetsHome";
+import TrustBar from "@/components/home/TrustBar";
+import ClientWidgetsHome from "@/components/home/ClientWidgetsHome";
+import HeroKPI from "@/components/home/HeroKPI";
+import ClientWidgetsHome from "@/components/home/ClientWidgetsHome";
+import Image from "next/image";
+import MapLegend from "@/components/home/MapLegend";
+import LogoBar from "@/components/trust/LogoBar";
+
+import RoleGridEN from "@/components/home/RoleGridEN";
+import Solutions from "@/components/Solutions";
+import WhatYouGet from "@/components/WhatYouGet";
+import CoverageStrip from "@/components/CoverageStrip";
+import MethodsMini from "@/components/MethodsMini";
+
+import HeroKPI from "@/components/home/HeroKPI";
+import ClientWidgetsHome from "@/components/home/ClientWidgetsHome";
+
+export default function HomePage() {
+  return (
+    <main className="bg-white">
+      {/* HERO */}
+      <section className="relative min-h-[90vh] grid place-items-center">
+        <Image
+          src="/images/hero-port.jpg"
+          alt="PortPulse Hero"
+          fill
+          priority
+          placeholder="blur"
+          blurDataURL="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
+        <div className="relative container mx-auto px-4 py-20 md:py-24 text-white max-w-4xl">
+          <h1 className="text-4xl md:text-6xl font-semibold leading-tight">
+            Turn port congestion & trade momentum into reproducible data.
+          </h1>
+          <p className="mt-3 text-white/90 max-w-3xl">
+            Standardized JSON/CSV, cache-friendly and auditable. Freshness p95 ≤ 2h, API p95 ≤ 300ms, 30-day replay.
+          </p>
+
+          {/* === Frosted KPI row (replaces old chips) === */}
+          <HeroKPI />
+
+          {/* CTAs */}
+          <div className="mt-6 flex flex-wrap gap-3">
+            <a href="/pricing" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition shadow">
+              Start 14-day evaluation
+            </a>
+            <a href="/docs/api" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
+              Docs (OpenAPI)
+            </a>
+            <a href="/contact?intent=sales" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
+              Talk to sales
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Roles / problems we solve */}
+      <RoleGridEN />
+
+      {/* What you get */}
+      <section className="bg-[#F0F7FF]">
+        <div className="container mx-auto px-4 py-10">
+          <WhatYouGet />
+        </div>
+      </section>
+
+      {/* Solutions */}
+      <section className="container mx-auto px-4 py-10">
+        <div className="card-floating">
+          <div className="p-6"><Solutions />
+          </div>
+        </div>
+      </section>
+
+      {/* Heavy widgets (client, lazy) */}
+      <ClientWidgetsHome />
+
+      {/* Coverage & expansion */}
+      <section className="bg-[#EEF6FF]">
+        <div className="container mx-auto px-4 py-10">
+          <div className="mb-4">
+            <h2 className="text-xl font-medium">Global Coverage & Expansion</h2>
+            <p className="text-black/60 text-sm">
+              Live: <b>50+</b> · On-request: <b>100+</b> · Typical onboarding: <b>2–4 weeks</b>
+            </p>
+          </div>
+          <CoverageStrip />
+        </div>
+      </section>
+
+      <LogoBar />
+
+      {/* Methods mini */}
+      <section className="container mx-auto px-4 py-10">
+        <MethodsMini />
+      </section>
+
+      {/* Dark CTA */}
+      <section className="bg-[#0B2740] text-white">
+        <div className="container mx-auto px-4 py-12 md:py-16">
+          <h2 className="text-2xl font-medium">Add port-level truth to your planning</h2>
+          <p className="text-white/80 mt-1">5 ports · fair quota · full features for 14 days</p>
+          <HeroKPI />
+
+          <div className="mt-5 flex gap-3">
+            <a href="/pricing" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition">Start evaluation</a>
+            <a href="/docs/api" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">Read the API</a>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}

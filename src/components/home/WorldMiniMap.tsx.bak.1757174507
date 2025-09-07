@@ -1,0 +1,112 @@
+// src/components/home/WorldMiniMap.tsx
+'use client';
+import { useEffect, useMemo, useState } from 'react';
+
+type Snap = { unlocode: string; metrics?: { congestion_score?: number; avg_wait_hours?: number; updated_at?: string } };
+
+const PORTS = [
+  { code: 'USLAX', x: 140, y: 220 },
+  { code: 'USNYC', x: 220, y: 210 },
+  { code: 'BEANR', x: 450, y: 180 },
+  { code: 'NLRTM', x: 440, y: 190 },
+  { code: 'CNSHA', x: 770, y: 210 },
+  { code: 'CNNGB', x: 760, y: 190 },
+  { code: 'HKHKG', x: 790, y: 190 },
+  { code: 'SGSIN', x: 740, y: 260 },
+];
+
+function colorBy(score: number) {
+  const s = Math.max(0, Math.min(1, score));
+  return s < 0.4 ? '#10B981' : s < 0.7 ? '#F59E0B' : '#EF4444';
+}
+
+export default function WorldMiniMap() {
+  const [snaps, setSnaps] = useState<Record<string, Snap>>({});
+  const base = (process.env.NEXT_PUBLIC_API_BASE ?? 'https://api.useportpulse.com').replace(/\/$/, '');
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const out: Record<string, Snap> = {};
+      await Promise.all(
+        PORTS.map(async (p) => {
+          try {
+            const r = await fetch(`${base}/v1/ports/${p.code}/snapshot`, { cache: 'no-store' });
+            if (!r.ok) return;
+            out[p.code] = (await r.json()) as Snap;
+          } catch {}
+        })
+      );
+      if (!cancelled) setSnaps(out);
+    })();
+    return () => { cancelled = true; };
+  }, [base]);
+
+  // 简易标签防重叠：按 x 排序，若相邻文本距离过近则向下错位
+  const laidOut = useMemo(() => {
+    const pad = 16, lineH = 16;
+    const items = PORTS.map(p => ({ ...p, dy: 0 })).sort((a,b)=>a.x-b.x);
+    for (let i = 1; i < items.length; i++) {
+      const prev = items[i-1], cur = items[i];
+      const tooCloseX = Math.abs(cur.x - prev.x) < 60;
+      const tooCloseY = Math.abs((cur.y+cur.dy) - (prev.y+prev.dy)) < lineH;
+      if (tooCloseX && tooCloseY) cur.dy = (prev.dy + lineH);
+    }
+    return items.map(p => ({ ...p, labelX: p.x + pad, labelY: p.y + 4 + p.dy }));
+  }, []);
+
+  const w = 900, h = 360;
+  const live = Object.keys(snaps).length > 0;
+
+  return (
+    <div data-map="v2" className="relative rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+      <svg viewBox={`0 0 ${w} ${h}`} width="100%" height="360" role="img" aria-label="Global activity">
+        {/* grid */}
+        {Array.from({ length: 6 }).map((_, i) => (
+          <line key={'g'+i} x1={(i+1)*(w/7)} y1={20} x2={(i+1)*(w/7)} y2={h-20} stroke="#E2E8F0" strokeDasharray="4 6"/>
+        ))}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <line key={'h'+i} x1={20} y1={80+i*100} x2={w-20} y2={80+i*100} stroke="#E2E8F0" strokeDasharray="4 6"/>
+        ))}
+
+        {/* points + labels */}
+        {laidOut.map((p) => {
+          const snap = snaps[p.code];
+          const score = snap?.metrics?.congestion_score ?? 0.35;
+          const wait = snap?.metrics?.avg_wait_hours;
+          const r = 6 + Math.max(0, Math.min(1, score)) * 6;
+          const fill = colorBy(score);
+          return (
+            <g key={p.code} transform={`translate(${p.x},${p.y})`}>
+              <title>
+                {p.code}
+                {typeof wait === 'number' ? ` • avg wait ${wait.toFixed(1)}h` : ''}
+              </title>
+              <circle r={r} fill={fill}/>
+              {/* 文本加白描边，读性更好；经简单避让后错位 */}
+              <text x={p.labelX - p.x} y={p.labelY - p.y}
+                    fontSize="14" fontFamily="Inter, system-ui, sans-serif"
+                    fill="#0B2740" style={{ paintOrder:'stroke', stroke:'#fff', strokeWidth:3 }}>
+                {p.code}
+              </text>
+            </g>
+          );
+        })}
+      </svg>
+
+      {/* 角标：数据状态 */}
+      <div className="absolute right-3 bottom-2 text-xs">
+        <span className={live ? "text-emerald-600" : "text-slate-400"}>
+          {live ? "live snapshots" : "fallback demo"}
+        </span>
+      </div>
+
+      {/* 图例 */}
+      <div className="mt-2 flex items-center gap-4 text-xs text-slate-500">
+        <span>Dot size ≈ traffic</span>
+        <span>Color ≈ congestion</span>
+        <span className="ml-auto text-slate-400">Illustrative only.</span>
+      </div>
+    </div>
+  );
+}

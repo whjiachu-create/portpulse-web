@@ -1,4 +1,4 @@
-import PricingFAQ from "./_components/PricingFAQ";
+import PricingFAQ from "@/components/pricing/PricingFAQ";
 import PricingTable from "@/components/PricingTable";
 
 export const metadata = {
@@ -66,7 +66,8 @@ export default function PricingPage() {
           }),
         }}
       />
-      <PricingFAQ />
+  {/* === Pricing FAQ (floating cards) === */}
+  <PricingFAQ />
 </main>
   );
 }
@@ -79,3 +80,5 @@ function Card({ title, desc }:{title:string; desc:string}) {
     </div>
   );
 }
+
+

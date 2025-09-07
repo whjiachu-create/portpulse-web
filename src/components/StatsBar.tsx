@@ -1,17 +1,17 @@
 export default function StatsBar() {
-  const stats = [
-    { k: "67+ ports", v: "today" },
-    { k: "p95 < 300ms", v: "API latency" },
-    { k: "30-day replay", v: "history" },
-    { k: "SLA 99.9%", v: "Pro+" },
+  const items = [
+    { label: "Ports", value: "67+" },
+    { label: "API p95", value: "< 300ms" },
+    { label: "Replay", value: "30 days" },
+    { label: "Availability", value: "99.9% SLA" },
   ];
   return (
-    <section aria-label="Network stats" className="mt-8">
-      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.k} className="flex items-baseline justify-between rounded-xl bg-white p-4 shadow-sm">
-            <span className="text-base font-semibold">{s.k}</span>
-            <span className="text-xs text-slate-500">{s.v}</span>
+    <section className="relative z-10 container mx-auto px-4 -mt-8 md:-mt-10">
+      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
+        {items.map((it) => (
+          <div key={it.label} className="card px-5 py-4">
+            <div className="text-2xl font-semibold">{it.value}</div>
+            <div className="text-sm text-slate-600">{it.label}</div>
           </div>
         ))}
       </div>

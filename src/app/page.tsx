@@ -3,7 +3,7 @@ import Image from "next/image";
 import RoleGridEN from "@/components/home/RoleGridEN";
 import Solutions from "@/components/Solutions";
 import TrendMini from "@/components/TrendMini";
-import WorldMiniMap from "@/components/WorldMiniMap";
+import WorldActivity from "@/components/home/WorldActivity";
 import CoverageStrip from "@/components/CoverageStrip";
 import WhatYouGet from "@/components/WhatYouGet";
 import MethodsMini from "@/components/MethodsMini";
@@ -14,7 +14,7 @@ export const dynamic = "force-static";
 export default function HomePage() {
   return (
     <main className="bg-white">
-      {/* HERO (image background at top; copy updated; image unchanged) */}
+      {/* HERO */}
       <section className="relative min-h-[90vh] grid place-items-center">
         <Image
           src="/images/hero-port.jpg"
@@ -34,36 +34,23 @@ export default function HomePage() {
             Standardized JSON/CSV, cache-friendly and auditable. Freshness p95 ≤ 2h, API p95 ≤ 300ms, 30-day replay.
           </p>
 
-          {/* chips */}
-          <div className="mt-5 flex flex-wrap gap-2">
-            {["50+ ports","Freshness p95 ≤ 2h","API p95 ≤ 300ms","30-day replay","CSV ETag/304"].map((s)=>(
-              <span key={s} className="pill bg-white/10 border border-white/20 text-white">{s}</span>
-            ))}
-          </div>
-
-          {/* CTAs */}
+          {/* 精简 CTA：仅保留 Start evaluation */}
           <div className="mt-6 flex flex-wrap gap-3">
             <a href="/pricing" className="rounded-xl bg-white text-black px-5 py-2 font-medium hover:opacity-90 transition shadow">
               Start 14-day evaluation
             </a>
-            <a href="/docs/api" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
-              Docs (OpenAPI)
-            </a>
-            <a href="/contact?intent=sales" className="rounded-xl border border-white/30 px-5 py-2 hover:bg-white/10 transition">
-              Talk to sales
-            </a>
           </div>
 
-          {/* trust badges */}
+          {/* Badges */}
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl">
-            <Badge label="Ports covered" value="50+" />
+            <Badge label="Ports covered" value="100" />
             <Badge label="Freshness (p95)" value="≤ 2h" />
             <Badge label="API latency (p95)" value="≤ 300ms" />
           </div>
         </div>
       </section>
 
-      {/* Roles / problems we solve */}
+      {/* Roles */}
       <RoleGridEN />
 
       {/* What you get */}
@@ -73,13 +60,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Solutions */}
+      {/* Solutions（无外框） */}
       <section className="container mx-auto px-4 py-10">
-        <div className="rounded-2xl border border-black/10 bg-white shadow-sm">
-          <div className="p-6">
-            <Solutions />
-          </div>
-        </div>
+        <Solutions />
       </section>
 
       {/* Live Trend minis */}
@@ -102,13 +85,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Mini world map */}
+      {/* Global activity（地图无外框；不再引用不存在的组件） */}
       <section className="bg-[#F7FBFF]">
         <div className="container mx-auto px-4 py-10">
           <h2 className="text-xl font-medium">Global activity</h2>
           <p className="text-black/60">Pulse markers highlight major ports. Hover for details.</p>
-          <div className="mt-4 rounded-2xl border border-black/10 bg-white p-4 shadow-sm">
-            <WorldMiniMap />
+          <div className="mt-4">
+            <WorldActivity title="Global activity" />
           </div>
         </div>
       </section>
@@ -124,7 +107,7 @@ export default function HomePage() {
             <a href="/docs/api" className="text-sm underline text-[#0B2740]">Open docs</a>
           </div>
           <div className="mt-4">
-            <PortComparator ports={["USLAX","USNYC","SGSIN","CNSHA","CNNGB","HKHKG","NLRTM","BEANR"]} days={14} />
+            <PortComparator ports={["USLAX", "USNYC", "SGSIN", "CNSHA", "CNNGB", "HKHKG", "NLRTM", "BEANR"]} days={14} />
           </div>
         </div>
       </section>
@@ -134,13 +117,15 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-10">
           <div className="mb-4">
             <h2 className="text-xl font-medium">Global Coverage & Expansion</h2>
-            <p className="text-black/60 text-sm">Live: <b>50+</b> · On-request: <b>100+</b> · Typical onboarding: <b>2–4 weeks</b></p>
+            <p className="text-black/60 text-sm">
+              Live: <b>100+</b> · On-request: <b>100+</b> · Typical onboarding: <b>2–4 weeks</b>
+            </p>
           </div>
           <CoverageStrip />
         </div>
       </section>
 
-      {/* Methods mini */}
+      {/* Methods */}
       <section className="container mx-auto px-4 py-10">
         <MethodsMini />
       </section>
@@ -160,7 +145,7 @@ export default function HomePage() {
   );
 }
 
-function Badge({label, value}:{label:string; value:string}) {
+function Badge({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white/10 backdrop-blur border border-white/20 px-4 py-2 shadow-sm">
       <div className="text-xs text-white/80">{label}</div>

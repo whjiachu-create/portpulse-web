@@ -1,35 +1,21 @@
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+const UP = "https://api.useportpulse.com";
 
-const RAW_BASE = process.env.NEXT_PUBLIC_API_BASE;
-const DEFAULT_BASE = "https://api.useportpulse.com";
-const BASE = RAW_BASE && /^https?:\/\//i.test(RAW_BASE) ? RAW_BASE.replace(/\/+$/, "") : DEFAULT_BASE;
-const DEMO = process.env.NEXT_PUBLIC_DEMO_API_KEY || "dev_demo_123";
+type P = { path?: string[] };
 
-async function proxy(req: NextRequest, segs: string[]) {
-  const path = segs?.filter(Boolean).join("/");
-  const url = new URL(`${BASE}/${path}`);
-  // 透传查询参数
+async function proxy(req: NextRequest, ctx: { params: Promise<P> }) {
+  const { path = [] } = await ctx.params;                           // ★ 关键修复：await params
+  const url = new URL(UP + "/" + path.join("/"));
   req.nextUrl.searchParams.forEach((v, k) => url.searchParams.set(k, v));
 
-  const res = await fetch(url.toString(), {
-    headers: {
-      Authorization: `Bearer ${DEMO}`,
-      Accept: "application/json",
-    },
-    // 轻缓存，减抖动
-    next: { revalidate: 300 },
+  const key = req.headers.get("x-api-key") ?? process.env.NEXT_PUBLIC_DEMO_API_KEY ?? "demo_key";
+  const r = await fetch(url.toString(), {
+    headers: { "X-API-Key": key, "Accept": "application/json,text/csv,*/*" },
+    next: { revalidate: 300 }
   });
-
-  return new Response(res.body, {
-    status: res.status,
-    headers: {
-      "content-type": res.headers.get("content-type") ?? "application/json",
-      "cache-control": res.headers.get("cache-control") ?? "public, max-age=300",
-    },
-  });
+  return new Response(r.body, { status: r.status, headers: r.headers });
 }
 
-export async function GET(req: NextRequest, ctx: { params: Promise<{ path: string[] }> }) {
-  const { path } = await ctx.params;     // Next 15：params 是 Promise，需 await
-  return proxy(req, path || []);
-}
+export const dynamic = "force-dynamic";
+export async function GET(req: NextRequest, ctx: { params: Promise<P> }) { return proxy(req, ctx); }
+export async function HEAD(req: NextRequest, ctx: { params: Promise<P> }) { return proxy(req, ctx); }

@@ -1,0 +1,173 @@
+"use client";
+import { useMemo } from "react";
+
+/**
+ * WorldMiniMap (v2)
+ * - 统一实现，避免多版本漂移
+ * - 标签避让（简单碰撞消解）
+ * - 细线网格、引线、字号/对比度统一
+ */
+type Port = {
+  code: string;
+  name?: string;
+  lat: number;
+  lon: number;
+  traffic?: number;     // 0–100 映射点大小
+  congestion?: number;  // 0–1   映射颜色深浅
+};
+
+// 常用示例港口（如果你后续要接数据，只需把 dataPorts 换成接口返回）
+const dataPorts: Port[] = [
+  { code: "USLAX", lat: 33.74, lon: -118.27, traffic: 62, congestion: 0.35 },
+  { code: "USNYC", lat: 40.67, lon:  -74.00, traffic: 55, congestion: 0.28 },
+  { code: "SGSIN", lat:  1.26, lon:  103.84, traffic: 88, congestion: 0.30 },
+  { code: "HKHKG", lat: 22.32, lon:  114.17, traffic: 70, congestion: 0.36 },
+  { code: "CNSHA", lat: 31.23, lon:  121.47, traffic: 92, congestion: 0.42 },
+  { code: "CNNGB", lat: 29.88, lon:  121.55, traffic: 77, congestion: 0.33 },
+  { code: "NLRTM", lat: 51.95, lon:    4.14, traffic: 66, congestion: 0.22 },
+  { code: "BEANR", lat: 51.26, lon:    4.40, traffic: 58, congestion: 0.20 },
+];
+
+const W = 960;
+const H = 420;
+const M = 28;
+
+/** 简单等距投影 */
+function project(lat: number, lon: number) {
+  const x = (lon + 180) / 360 * (W - 2 * M) + M;
+  const y = (90 - (lat + 90)) / 180 * (H - 2 * M) + M + (H - 2 * M) / 2;
+  return { x, y };
+}
+
+type Box = { x: number; y: number; w: number; h: number };
+function intersect(a: Box, b: Box) {
+  return !(a.x + a.w < b.x || b.x + b.w < a.x || a.y + a.h < b.y || b.y + b.h < a.y);
+}
+
+/** 基于象限的标签初始偏移 + 垂直错位消解 */
+function placeLabels(points: { x: number; y: number; text: string }[]) {
+  const boxes: Box[] = [];
+  const FONT = 12;
+  const CHAR = 6.4; // 文本宽估计
+  const PADX = 6, PADY = 3;
+
+  return points.map(p => {
+    const w = p.text.length * CHAR + PADX * 2;
+    const h = FONT + PADY * 2;
+
+    // 初始方向：图左→标签放右；图右→放左；再看上下决定 y 偏移
+    let dx = p.x < W * 0.5 ? 12 : -12;
+    let dy = p.y < H * 0.5 ? 14 : -14;
+
+    let lx = p.x + (dx > 0 ? 10 : -(w + 10));
+    let ly = p.y + dy;
+
+    // 纵向错位，避免和已放置的重叠
+    let tries = 0;
+    const cur: Box = { x: lx, y: ly - h + 2, w, h };
+    while (boxes.some(b => intersect(cur, b)) && tries < 10) {
+      ly += (tries % 2 === 0 ? 14 : -14);
+      cur.y = ly - h + 2;
+      tries++;
+    }
+    boxes.push({ ...cur });
+
+    const textAnchor = dx > 0 ? "start" : "end";
+    return { ...p, lx, ly, w, h, textAnchor, box: cur, dx, dy };
+  });
+}
+
+export default function WorldMiniMap() {
+  // 计算点位
+  const points = useMemo(() => {
+    return dataPorts.map(pt => {
+      const { x, y } = project(pt.lat, pt.lon);
+      const traffic = Math.max(0, Math.min(100, pt.traffic ?? 50));
+      const congestion = Math.max(0, Math.min(1, pt.congestion ?? 0.3));
+      const r = 4 + (traffic / 100) * 6; // 4–10
+      // 绿色系，拥堵越高越深
+      const base = 180 - Math.round(congestion * 80); // 180→100
+      const fill = `hsl(150 ${base}% 35%)`;
+      const stroke = `hsl(150 ${base - 20}% 28%)`;
+      return { ...pt, x, y, r, fill, stroke };
+    });
+  }, []);
+
+  const labels = useMemo(() => {
+    return placeLabels(points.map(p => ({ x: p.x, y: p.y, text: p.code })));
+  }, [points]);
+
+  // 网格
+  const gridX = 6, gridY = 4;
+
+  return (
+    <div className="rounded-xl bg-white border border-slate-200 shadow-sm">
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        width="100%"
+        height="420"
+        role="img"
+        aria-label="Global activity"
+        data-map="world-mini-v2"
+      >
+        {/* 背景 */}
+        <rect x="0" y="0" width={W} height={H} rx="12" fill="#fff" />
+        <rect x={M} y={M} width={W-2*M} height={H-2*M} rx="10" fill="#F8FAFC" stroke="#E2E8F0" />
+
+        {/* 网格线 */}
+        <g stroke="#E5E7EB" strokeDasharray="4 6">
+          {Array.from({ length: gridX - 1 }).map((_, i) => {
+            const x = M + ((i + 1) * (W - 2 * M)) / gridX;
+            return <line key={`vx-${i}`} x1={x} x2={x} y1={M} y2={H - M} />;
+          })}
+          {Array.from({ length: gridY - 1 }).map((_, i) => {
+            const y = M + ((i + 1) * (H - 2 * M)) / gridY;
+            return <line key={`hy-${i}`} y1={y} y2={y} x1={M} x2={W - M} />;
+          })}
+        </g>
+
+        {/* 点位 */}
+        <g>
+          {points.map(p => (
+            <g key={p.code}>
+              <circle cx={p.x} cy={p.y} r={p.r} fill={p.fill} stroke={p.stroke} strokeWidth={1} />
+            </g>
+          ))}
+        </g>
+
+        {/* 标签（带小白底 + 引线） */}
+        <g fontFamily="Inter, ui-sans-serif, system-ui">
+          {labels.map((lb, i) => {
+            const p = points[i];
+            const anchorX = lb.textAnchor === "start" ? lb.lx : lb.lx - lb.w + 2;
+            const anchorY = lb.ly - lb.h + 10;
+            return (
+              <g key={`lb-${p.code}`}>
+                {/* 引线 */}
+                <line x1={p.x} y1={p.y} x2={anchorX} y2={anchorY} stroke="#94A3B8" strokeWidth={0.6} />
+                {/* 白底 */}
+                <rect x={lb.box.x} y={lb.box.y} rx={3} width={lb.w} height={lb.h} fill="#fff" opacity="0.92" />
+                {/* 文本 */}
+                <text
+                  x={lb.lx + (lb.textAnchor === "start" ? 0 : 0)}
+                  y={lb.ly - 4}
+                  textAnchor={lb.textAnchor as any}
+                  fontSize={12}
+                  fontWeight={600}
+                  fill="#0B2740"
+                >
+                  {p.code}
+                </text>
+              </g>
+            );
+          })}
+        </g>
+
+        {/* 角落说明 */}
+        <g fontFamily="Inter, ui-sans-serif, system-ui" fontSize={10} fill="#64748B">
+          <text x={M} y={H - 10}>Dot size ≈ traffic   Color ≈ congestion</text>
+        </g>
+      </svg>
+    </div>
+  );
+}

@@ -1,64 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LineChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-type Pt = { ts: string | number; v: number };
+type Point = { date: string; avg_wait_hours?: number; vessels?: number; congestion_score?: number };
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "https://api.useportpulse.com";
-const DEMO_KEY = process.env.NEXT_PUBLIC_DEMO_API_KEY || "dev_demo_123";
+export default function TrendMini({ unlocode, days = 14 }: { unlocode: string; days?: number }) {
+  const [data, setData] = useState<Point[] | null>(null);
+  const [err, setErr] = useState<string | null>(null);
 
-export default function TrendMini({ unlocode, days = 7, height = 224 }: { unlocode: string; days?: number; height?: number }) {
-    const [data, setData] = useState<Pt[]>([]);
-    const [err, setErr] = useState<string | null>(null);
+  useEffect(() => {
+    const ctrl = new AbortController();
+    const base = process.env.NEXT_PUBLIC_API_BASE || "https://api.useportpulse.com";
+    const url = `${base}/v1/ports/${unlocode}/trend?days=${days}&fields=avg_wait_hours,date`;
 
-    type TrendPoint = { date: string; congestion_score?: number; vessels?: number };
-    type TrendResponse = { points?: TrendPoint[] };
+    fetch(url, {
+      signal: ctrl.signal,
+      headers: { "X-API-Key": process.env.NEXT_PUBLIC_DEMO_API_KEY || "demo_key" },
+      cache: "no-store",
+    })
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+        const j = await r.json();
+        setData(j.points || j.items || []);
+      })
+      .catch((e) => {
+        if (e.name !== "AbortError") setErr(e.message);
+      });
 
-    useEffect(() => {
-        let disposed = false;
-        (async () => {
-            try {
-                const res = await fetch(`${API_BASE}/v1/ports/${unlocode}/trend?days=${days}`, {
-                    headers: DEMO_KEY ? { "X-API-Key": DEMO_KEY } : {},
-                    next: { revalidate: 60 },
-                });
-                if (!res.ok) throw new Error(`${res.status}`);
-                const j = (await res.json()) as TrendResponse;
-                const pts: Pt[] = (j.points ?? []).map((p) => ({
-                    ts: p.date,
-                    v: typeof p.congestion_score === "number" ? p.congestion_score : typeof p.vessels === "number" ? p.vessels : 0,
-                }));
-                if (!disposed) { setData(pts); setErr(null); }
-            } catch (e) {
-                if (!disposed) setErr(e instanceof Error ? e.message : String(e));
-            }
-        })();
-        return () => { disposed = true; };
-    }, [unlocode, days]);
+    return () => ctrl.abort();
+  }, [unlocode, days]);
 
-    return (
-        <div className="rounded-2xl border border-slate-200 bg-white">
-            <div className="flex items-center justify-between px-4 py-2 border-b border-slate-100">
-                <div className="text-sm font-medium">{unlocode} · {days}-day trend</div>
-                <a className="text-xs text-slate-500 hover:text-slate-700" href="https://docs.useportpulse.com/openapi.json" target="_blank" rel="noreferrer noopener">OpenAPI</a>
-            </div>
-            <div className="px-3" style={{ height }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data}>
-                        <XAxis dataKey="ts" tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                        <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={false} />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="v" strokeWidth={2} dot={false} isAnimationActive={false} />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-            <div className="px-4 py-3 text-xs text-rose-600">{err ? `Failed to load: ${err}` : "\u00A0"}</div>
-            <div className="px-3 pb-3">
-                <pre className="whitespace-pre-wrap rounded-lg border border-slate-200 bg-slate-50 p-3 text-[11px] leading-relaxed">
-                    {`curl -sS -H "X-API-Key: ${DEMO_KEY}" "${API_BASE}/v1/ports/${unlocode}/trend?days=${days}" | jq .`}
-                </pre>
-            </div>
-        </div>
-    );
+  if (err) return <div className="text-red-600 text-sm">Failed to load: {err}</div>;
+  if (!data) return <div className="h-28 rounded-xl bg-slate-100 animate-pulse" />;
+
+  const vals = data.map((d) => d.avg_wait_hours ?? 0);
+  const n = Math.max(vals.length, 2);
+  const W = 320, H = 112, PAD = 12;
+  const max = Math.max(...vals, 1), min = Math.min(...vals, 0);
+  const range = max - min || 1;
+  const pts = vals.map((v, i) => {
+    const x = PAD + (i / (n - 1)) * (W - PAD * 2);
+    const y = PAD + (1 - (v - min) / range) * (H - PAD * 2);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(" ");
+
+  return (
+    <div className="relative">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-28 rounded-lg bg-white">
+        <polyline points={pts} fill="none" strokeWidth="2" className="text-sky-600" stroke="currentColor" />
+      </svg>
+      <div className="absolute right-2 top-2 text-[11px] text-slate-500">
+        <a href="/docs/api" className="underline">OpenAPI</a>
+      </div>
+    </div>
+  );
 }
