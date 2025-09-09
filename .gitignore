@@ -9,3 +9,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# backups (do not track)
+backup/
+*.tgz
+*.bundle
