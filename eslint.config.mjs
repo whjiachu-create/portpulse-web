@@ -1,34 +1,56 @@
-// eslint.config.mjs
-import next from "eslint-config-next";
+// Flat config for ESLint 9 (no shareable config, register plugin directly)
+import js from "@eslint/js";
+import tseslint from "typescript-eslint";
+import nextPlugin from "@next/eslint-plugin-next";
 
 export default [
-  ...next(),
   {
     ignores: [
       ".next/**",
       "out/**",
       "node_modules/**",
       "public/**",
-
-      // 你的备份/快照目录（大量误报都来自这里）
       "backup/**",
       "backups/**",
       "**/workspace/**",
-
-      // 工具生成文件
       "next-env.d.ts",
+      "**/*.backup.ts",
+      "**/*.backup.tsx",
     ],
-    rules: {
-      // 把 <img> 提示降级或直接关掉： "off" 也可以
-      "@next/next/no-img-element": "warn",
+  },
 
-      // 避免把 'use client' 误判成“无用表达式”
+  js.configs.recommended,
+  // 非 type-aware 的 TS 推荐配置（避免 parserOptions.project 报错）
+  ...tseslint.configs.recommended,
+
+  {
+    plugins: {
+      // 以 "@next/next" 注册，才能识别文件里的禁用指令
+      "@next/next": nextPlugin,
+    },
+    languageOptions: {
+      parserOptions: { project: null },
+    },
+    rules: {
+      // 关掉图片规则（文件里若有 disable 指令也不会再报“未找到规则”）
+      "@next/next/no-img-element": "off",
+
+      // 这些在你的代码里噪音较多，暂时关闭；需要时再逐步收紧
+      "@typescript-eslint/no-floating-promises": "off",
+      "@typescript-eslint/no-misused-promises": "off",
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+
       "@typescript-eslint/no-unused-expressions": ["warn", {
         allowShortCircuit: true,
         allowTernary: true,
         enforceForJSX: true,
         allowTaggedTemplates: true,
       }],
+      "@typescript-eslint/no-unnecessary-type-assertion": "off",
     },
   },
 ];

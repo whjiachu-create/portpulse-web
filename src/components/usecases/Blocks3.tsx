@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 // src/components/usecases/Blocks3.tsx
 import React from "react";
 

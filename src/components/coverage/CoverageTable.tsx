@@ -4,16 +4,27 @@ import { useMemo, useState } from "react";
 import { PORTS100, type PortRow } from "@/data/ports100";
 import { useRouter } from "next/navigation";
 
+// 仅包含 PortRow 原有键
+type SortKey = Extract<keyof PortRow, string>;
+// UI 支持的排序键 = PortRow 键 + "role"
+type SortKeyOrRole = SortKey | "role";
+
 type Props = { initialPort?: string };
 
 const ALL = "All";
+
+// 从数据里安全获取 role（数据里有但类型未声明时也能用）
+function getRole(r: PortRow): string | undefined {
+  // 如果未来 PortRow 类型补上了 role，这里也兼容
+  return (r as unknown as { role?: string })?.role;
+}
 
 export default function CoverageTable({ initialPort = "" }: Props) {
   const router = useRouter();
   const [q, setQ] = useState<string>(initialPort);
   const [region, setRegion] = useState<string>(ALL);
   const [role, setRole] = useState<string>(ALL);
-  const [sortBy, setSortBy] = useState<keyof PortRow>("unlocode");
+  const [sortBy, setSortBy] = useState<SortKeyOrRole>(() => "code");
 
   // 唯一化区域和角色（容错：即便数据为空也能跑）
   const regions = useMemo(
@@ -29,23 +40,31 @@ export default function CoverageTable({ initialPort = "" }: Props) {
       const needle = q.toLowerCase();
       rows = rows.filter(
         (r) =>
-          r.unlocode.toLowerCase().includes(needle) ||
+          r.code.toLowerCase().includes(needle) ||
           r.name.toLowerCase().includes(needle) ||
           r.country.toLowerCase().includes(needle)
       );
     }
     if (region !== ALL) rows = rows.filter((r) => r.region === region);
-    if (role !== ALL) rows = rows.filter((r) => r.role === role);
+    if (role !== ALL) rows = rows.filter((r) => getRole(r) === role);
 
     rows.sort((a, b) => {
-      const A = String(a[sortBy]).toLowerCase();
-      const B = String(b[sortBy]).toLowerCase();
+      let A = "";
+      let B = "";
+      if (sortBy === "role") {
+        A = (getRole(a) ?? "").toLowerCase();
+        B = (getRole(b) ?? "").toLowerCase();
+      } else {
+        A = String((a as Record<string, unknown>)[sortBy] ?? "").toLowerCase();
+        B = String((b as Record<string, unknown>)[sortBy] ?? "").toLowerCase();
+      }
       return A.localeCompare(B, "en");
     });
     return rows;
   }, [q, region, role, sortBy]);
 
-  const openPort = (code: string) => router.push(`/coverage?port=${encodeURIComponent(code)}`);
+  const openPort = (code: string) =>
+    router.push(`/coverage?port=${encodeURIComponent(code)}`);
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white shadow-sm">
@@ -88,10 +107,10 @@ export default function CoverageTable({ initialPort = "" }: Props) {
           <span className="text-slate-500">Sort by</span>
           <select
             value={String(sortBy)}
-            onChange={(e) => setSortBy(e.target.value as keyof PortRow)}
+            onChange={(e) => setSortBy(e.target.value as SortKeyOrRole)}
             className="rounded-lg border border-slate-200 px-2.5 py-1.5 text-sm"
           >
-            <option value="unlocode">UN/LOCODE</option>
+            <option value="code">UN/LOCODE</option>
             <option value="name">Name</option>
             <option value="country">Country</option>
             <option value="region">Region</option>
@@ -114,33 +133,42 @@ export default function CoverageTable({ initialPort = "" }: Props) {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((p) => (
-              <tr key={p.unlocode} className="border-t border-slate-100">
-                <Td mono>{p.unlocode}</Td>
-                <Td>{p.name}</Td>
-                <Td>{p.country}</Td>
-                <Td>{p.region}</Td>
-                <Td className="text-center">
-                  <span
-                    className={`inline-flex rounded-full px-2 py-0.5 text-xs ${
-                      p.role === "G"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        : "bg-indigo-50 text-indigo-700 border border-indigo-200"
-                    }`}
-                  >
-                    {p.role}
-                  </span>
-                </Td>
-                <Td className="text-right">
-                  <button
-                    onClick={() => openPort(p.unlocode)}
-                    className="rounded-md border border-slate-200 px-2.5 py-1 text-xs hover:bg-slate-50"
-                  >
-                    Open details
-                  </button>
-                </Td>
-              </tr>
-            ))}
+            {filtered.map((p) => {
+              const roleVal = getRole(p);
+              return (
+                <tr key={p.code} className="border-t border-slate-100">
+                  <Td mono>{p.code}</Td>
+                  <Td>{p.name}</Td>
+                  <Td>{p.country}</Td>
+                  <Td>{p.region}</Td>
+                  <Td className="text-center">
+                    {roleVal ? (
+                      <span
+                        className={`inline-flex rounded-full px-2 py-0.5 text-xs ${
+                          roleVal === "G"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-indigo-50 text-indigo-700 border border-indigo-200"
+                        }`}
+                      >
+                        {roleVal}
+                      </span>
+                    ) : (
+                      <span className="inline-flex rounded-full border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs text-slate-500">
+                        —
+                      </span>
+                    )}
+                  </Td>
+                  <Td className="text-right">
+                    <button
+                      onClick={() => openPort(p.code)}
+                      className="rounded-md border border-slate-200 px-2.5 py-1 text-xs hover:bg-slate-50"
+                    >
+                      Open details
+                    </button>
+                  </Td>
+                </tr>
+              );
+            })}
             {filtered.length === 0 && (
               <tr>
                 <td colSpan={6} className="py-10 text-center text-slate-500">

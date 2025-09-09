@@ -5,7 +5,7 @@ function MetricCard({label, unlocode}:{label:string; unlocode:string}) {
   return (
     <div className="rounded-2xl border border-black/10 bg-white p-4">
       <div className="text-sm text-black/60 mb-2">{label}</div>
-      <TrendMini unlocode={unlocode} days={14} height={160} />
+      <TrendMini unlocode={unlocode} days={14}  />
     </div>
   );
 }

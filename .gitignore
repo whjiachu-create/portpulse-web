@@ -1,13 +1,11 @@
-# deps
-node_modules
-
-# build outputs
-.next
-out
-
-# env / local
+# dependencies
+node_modules/
+# next
+.next/
+out/
+# env & logs
 .env*
-.vercel
-
-# misc
-.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

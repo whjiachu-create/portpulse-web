@@ -60,7 +60,7 @@ type Card = {
   tag: string;
   desc: string;
   href: string;
-  Icon: (p: SVGProps<SVGSVGElement>) => JSX.Element;
+  Icon: (p: SVGProps<SVGSVGElement>) => React.ReactElement;
 };
 
 const CARDS: Card[] = [

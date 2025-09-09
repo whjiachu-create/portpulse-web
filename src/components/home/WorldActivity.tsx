@@ -93,13 +93,12 @@ export default function WorldActivity({
     return feature(topo, obj) as Feature | FeatureCollection;
   }, []);
 
-  const { graticule, proj, path } = useMemo(() => {
+  const { proj, path } = useMemo(() => {
     const proj = geoNaturalEarth1()
       .fitExtent([[m, m], [width - m, heightPx - m]], { type: "Sphere" } as GeoPermissibleObjects)
       .precision(0.5);
     const path = geoPath(proj);
-    const graticule = geoGraticule10();
-    return { graticule, proj, path };
+    return { proj, path };
   }, [width, heightPx, m]);
 
   const renderDots = useMemo(() => {

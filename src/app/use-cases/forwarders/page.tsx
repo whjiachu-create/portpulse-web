@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 // src/app/use-cases/forwarders/page.tsx
 import Link from "next/link";
 

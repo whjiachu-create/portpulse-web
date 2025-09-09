@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 // src/app/use-cases/lsp/page.tsx
 export const dynamic = "force-static";
 
