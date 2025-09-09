@@ -9,27 +9,33 @@ export default function SiteFooter() {
           </p>
           <p className="text-black/50 mt-4 text-xs">© {new Date().getFullYear()} PortPulse. All rights reserved.</p>
         </div>
+
         <FooterCol title="Product" items={[
           ["Product", "/product"],
           ["Pricing", "/pricing"],
           ["Docs / OpenAPI", "/docs/api"],
           ["Coverage", "/coverage"],
-        ]}/>
+        ]} />
+
         <FooterCol title="Resources" items={[
           ["Blog", "/blog"],
           ["FAQ", "/faq"],
           ["Security", "/security"],
           ["Status", "https://status.useportpulse.com"],
-        ]}/>
+        ]} />
+
         <FooterCol title="Company" items={[
           ["Talk to sales", "/contact?intent=sales"],
           ["Privacy", "/privacy"],
           ["Terms", "/terms"],
-        ]}/>
+          ["SLA", "/legal/sla"],
+          ["DPA", "/legal/dpa"],
+        ]} />
       </div>
     </footer>
   );
 }
+
 function FooterCol({ title, items }: { title: string; items: [string, string][] }) {
   return (
     <div>
@@ -37,7 +43,13 @@ function FooterCol({ title, items }: { title: string; items: [string, string][] 
       <ul className="space-y-2 text-sm">
         {items.map(([label, href]) => (
           <li key={label}>
-            <a href={href} className="text-black/70 hover:text-black transition">{label}</a>
+            <a
+              href={href}
+              className="text-black/70 hover:text-black transition"
+              {...(href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+            >
+              {label}
+            </a>
           </li>
         ))}
       </ul>

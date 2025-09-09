@@ -1,134 +1,133 @@
+// src/data/ports100.ts
+export type Region =
+  | "North America"
+  | "Europe"
+  | "APAC"
+  | "Middle East"
+  | "LATAM"
+  | "Africa";
+
 export type PortRow = {
-  unlocode: string;
   name: string;
-  country: string; // ISO2
-  region: "North America" | "Europe" | "APAC" | "Middle East" | "LATAM" | "Africa";
-  role: "G" | "H"; // G=Gateway, H=Hub
+  code: string;        // UN/LOCODE
+  country: string;
+  region: Region;
+  status: "live" | "beta";
 };
 
 export const PORTS100: PortRow[] = [
-  // --- Core 30 ---
-  { unlocode: "USLAX", name: "Los Angeles", country: "US", region: "North America", role: "G" },
-  { unlocode: "USLGB", name: "Long Beach", country: "US", region: "North America", role: "G" },
-  { unlocode: "USNYC", name: "New York / New Jersey", country: "US", region: "North America", role: "G" },
-  { unlocode: "USSAV", name: "Savannah", country: "US", region: "North America", role: "G" },
-  { unlocode: "USCHS", name: "Charleston", country: "US", region: "North America", role: "G" },
-  { unlocode: "USORF", name: "Norfolk / Virginia", country: "US", region: "North America", role: "G" },
-  { unlocode: "USHOU", name: "Houston", country: "US", region: "North America", role: "G" },
-  { unlocode: "USSEA", name: "Seattle (NWSA)", country: "US", region: "North America", role: "G" },
-  { unlocode: "USOAK", name: "Oakland", country: "US", region: "North America", role: "G" },
-  { unlocode: "USMIA", name: "Miami", country: "US", region: "North America", role: "G" },
+  /* ------------------------------- APAC (27) ------------------------------- */
+  { name: "Shanghai", code: "CNSHA", country: "China", region: "APAC", status: "live" },
+  { name: "Ningbo-Zhoushan", code: "CNNGB", country: "China", region: "APAC", status: "live" },
+  { name: "Shenzhen (Yantian/Shekou)", code: "CNSZX", country: "China", region: "APAC", status: "live" },
+  { name: "Xiamen", code: "CNXMN", country: "China", region: "APAC", status: "live" },
+  { name: "Qingdao", code: "CNTAO", country: "China", region: "APAC", status: "live" },
+  { name: "Tianjin", code: "CNTJN", country: "China", region: "APAC", status: "live" },
+  { name: "Dalian", code: "CNDLC", country: "China", region: "APAC", status: "beta" },
+  { name: "Busan", code: "KRPUS", country: "Korea", region: "APAC", status: "live" },
+  { name: "Incheon", code: "KRINC", country: "Korea", region: "APAC", status: "beta" },
+  { name: "Singapore", code: "SGSIN", country: "Singapore", region: "APAC", status: "live" },
+  { name: "Tanjung Pelepas", code: "MYTPP", country: "Malaysia", region: "APAC", status: "live" },
+  { name: "Port Klang", code: "MYPKG", country: "Malaysia", region: "APAC", status: "live" },
+  { name: "Laem Chabang", code: "THLCH", country: "Thailand", region: "APAC", status: "live" },
+  { name: "Ho Chi Minh City (Cat Lai)", code: "VNSGN", country: "Vietnam", region: "APAC", status: "live" },
+  { name: "Haiphong", code: "VNHPP", country: "Vietnam", region: "APAC", status: "beta" },
+  { name: "Manila", code: "PHMNL", country: "Philippines", region: "APAC", status: "live" },
+  { name: "Jakarta / Tanjung Priok", code: "IDJKT", country: "Indonesia", region: "APAC", status: "live" },
+  { name: "Surabaya / Tanjung Perak", code: "IDSUB", country: "Indonesia", region: "APAC", status: "beta" },
+  { name: "Colombo", code: "LKCMB", country: "Sri Lanka", region: "APAC", status: "live" },
+  { name: "Chittagong", code: "BDCGP", country: "Bangladesh", region: "APAC", status: "beta" },
+  { name: "Nhava Sheva (JNPT)", code: "INNSA", country: "India", region: "APAC", status: "live" },
+  { name: "Mundra", code: "INMUN", country: "India", region: "APAC", status: "live" },
+  { name: "Chennai", code: "INMAA", country: "India", region: "APAC", status: "beta" },
+  { name: "Tokyo", code: "JPTYO", country: "Japan", region: "APAC", status: "live" },
+  { name: "Yokohama", code: "JPYOK", country: "Japan", region: "APAC", status: "live" },
+  { name: "Nagoya", code: "JPNGO", country: "Japan", region: "APAC", status: "beta" },
+  { name: "Kaohsiung", code: "TWKHH", country: "Taiwan", region: "APAC", status: "live" },
+  { name: "Hong Kong", code: "HKHKG", country: "Hong Kong, China", region: "APAC", status: "live" },
 
-  { unlocode: "NLRTM", name: "Rotterdam", country: "NL", region: "Europe", role: "G" },
-  { unlocode: "BEANR", name: "Antwerp-Bruges", country: "BE", region: "Europe", role: "G" },
-  { unlocode: "DEHAM", name: "Hamburg", country: "DE", region: "Europe", role: "G" },
-  { unlocode: "DEBRV", name: "Bremerhaven", country: "DE", region: "Europe", role: "G" },
-  { unlocode: "FRLEH", name: "Le Havre (HAROPA)", country: "FR", region: "Europe", role: "G" },
-  { unlocode: "GBFXT", name: "Felixstowe", country: "GB", region: "Europe", role: "G" },
-  { unlocode: "GBLGP", name: "London Gateway", country: "GB", region: "Europe", role: "G" },
-  { unlocode: "ESVLC", name: "Valencia", country: "ES", region: "Europe", role: "G" },
-  { unlocode: "ESALG", name: "Algeciras", country: "ES", region: "Europe", role: "H" },
-  { unlocode: "GRPIR", name: "Piraeus", country: "GR", region: "Europe", role: "H" },
+  /* ------------------------------ Europe (23) ------------------------------ */
+  { name: "Rotterdam", code: "NLRTM", country: "Netherlands", region: "Europe", status: "live" },
+  { name: "Antwerp-Bruges (Antwerp)", code: "BEANR", country: "Belgium", region: "Europe", status: "live" },
+  { name: "Hamburg", code: "DEHAM", country: "Germany", region: "Europe", status: "live" },
+  { name: "Bremerhaven", code: "DEBRV", country: "Germany", region: "Europe", status: "live" },
+  { name: "Felixstowe", code: "GBFXT", country: "United Kingdom", region: "Europe", status: "live" },
+  { name: "London Gateway", code: "GBLGP", country: "United Kingdom", region: "Europe", status: "beta" },
+  { name: "Southampton", code: "GBSOU", country: "United Kingdom", region: "Europe", status: "live" },
+  { name: "Gothenburg", code: "SEGOT", country: "Sweden", region: "Europe", status: "live" },
+  { name: "Aarhus", code: "DKARH", country: "Denmark", region: "Europe", status: "beta" },
+  { name: "Algeciras", code: "ESALG", country: "Spain", region: "Europe", status: "live" },
+  { name: "Valencia", code: "ESVLC", country: "Spain", region: "Europe", status: "live" },
+  { name: "Barcelona", code: "ESBCN", country: "Spain", region: "Europe", status: "live" },
+  { name: "Piraeus", code: "GRPIR", country: "Greece", region: "Europe", status: "live" },
+  { name: "Gioia Tauro", code: "ITGIT", country: "Italy", region: "Europe", status: "live" },
+  { name: "Trieste", code: "ITTRS", country: "Italy", region: "Europe", status: "beta" },
+  { name: "Koper", code: "SIKOP", country: "Slovenia", region: "Europe", status: "live" },
+  { name: "Gdańsk", code: "PLGDN", country: "Poland", region: "Europe", status: "live" },
+  { name: "Le Havre", code: "FRLEH", country: "France", region: "Europe", status: "live" },
+  { name: "Marseille", code: "FRMRS", country: "France", region: "Europe", status: "beta" },
+  { name: "Dublin", code: "IEDUB", country: "Ireland", region: "Europe", status: "beta" },
+  { name: "Zeebrugge", code: "BEZEE", country: "Belgium", region: "Europe", status: "live" },
+  { name: "Constanța", code: "ROCND", country: "Romania", region: "Europe", status: "beta" },
+  { name: "Oslo", code: "NOOSL", country: "Norway", region: "Europe", status: "beta" },
 
-  { unlocode: "CNSHA", name: "Shanghai", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "CNNGB", name: "Ningbo-Zhoushan", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "CNSZX", name: "Shenzhen (Yantian/Shekou)", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "CNTAO", name: "Qingdao", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "KRPUS", name: "Busan", country: "KR", region: "APAC", role: "H" },
-  { unlocode: "SGSIN", name: "Singapore", country: "SG", region: "APAC", role: "H" },
-  { unlocode: "MYTPP", name: "Tanjung Pelepas", country: "MY", region: "APAC", role: "H" },
-  { unlocode: "THLCH", name: "Laem Chabang", country: "TH", region: "APAC", role: "G" },
-  { unlocode: "INNSA", name: "Nhava Sheva (JNPT)", country: "IN", region: "APAC", role: "G" },
-  { unlocode: "INMUN", name: "Mundra", country: "IN", region: "APAC", role: "G" },
+  /* ------------------------- North America (20) --------------------------- */
+  { name: "Los Angeles", code: "USLAX", country: "United States", region: "North America", status: "live" },
+  { name: "Long Beach", code: "USLGB", country: "United States", region: "North America", status: "live" },
+  { name: "Oakland", code: "USOAK", country: "United States", region: "North America", status: "beta" },
+  { name: "Seattle", code: "USSEA", country: "United States", region: "North America", status: "live" },
+  { name: "Tacoma", code: "USTIW", country: "United States", region: "North America", status: "beta" },
+  { name: "Vancouver", code: "CAVAN", country: "Canada", region: "North America", status: "live" },
+  { name: "Prince Rupert", code: "CAPRR", country: "Canada", region: "North America", status: "live" },
+  { name: "New York / New Jersey", code: "USNYC", country: "United States", region: "North America", status: "live" },
+  { name: "Norfolk", code: "USORF", country: "United States", region: "North America", status: "live" },
+  { name: "Savannah", code: "USSAV", country: "United States", region: "North America", status: "live" },
+  { name: "Charleston", code: "USCHS", country: "United States", region: "North America", status: "live" },
+  { name: "Houston", code: "USHOU", country: "United States", region: "North America", status: "live" },
+  { name: "Miami", code: "USMIA", country: "United States", region: "North America", status: "beta" },
+  { name: "Baltimore", code: "USBAL", country: "United States", region: "North America", status: "live" },
+  { name: "Jacksonville", code: "USJAX", country: "United States", region: "North America", status: "beta" },
+  { name: "Montréal", code: "CAMTR", country: "Canada", region: "North America", status: "live" },
+  { name: "Halifax", code: "CAHAL", country: "Canada", region: "North America", status: "beta" },
+  { name: "Veracruz", code: "MXVER", country: "Mexico", region: "North America", status: "live" },
+  { name: "Manzanillo", code: "MXZLO", country: "Mexico", region: "North America", status: "live" },
+  { name: "Lázaro Cárdenas", code: "MXLZC", country: "Mexico", region: "North America", status: "beta" },
 
-  // --- Priority 22 (到 52) ---
-  { unlocode: "USTIW", name: "Tacoma (NWSA)", country: "US", region: "North America", role: "G" },
-  { unlocode: "USBAL", name: "Baltimore", country: "US", region: "North America", role: "G" },
-  { unlocode: "USPHL", name: "Philadelphia", country: "US", region: "North America", role: "G" },
-  { unlocode: "USJAX", name: "Jacksonville", country: "US", region: "North America", role: "G" },
-  { unlocode: "USMOB", name: "Mobile", country: "US", region: "North America", role: "G" },
-  { unlocode: "CAVAN", name: "Vancouver", country: "CA", region: "North America", role: "G" },
-  { unlocode: "CAPRR", name: "Prince Rupert", country: "CA", region: "North America", role: "G" },
+  /* ---------------------------- Middle East (10) --------------------------- */
+  { name: "Jebel Ali", code: "AEJEA", country: "United Arab Emirates", region: "Middle East", status: "live" },
+  { name: "Khor Fakkan", code: "AEKLF", country: "United Arab Emirates", region: "Middle East", status: "live" },
+  { name: "Dammam", code: "SADMM", country: "Saudi Arabia", region: "Middle East", status: "live" },
+  { name: "Jeddah", code: "SAJED", country: "Saudi Arabia", region: "Middle East", status: "live" },
+  { name: "King Abdullah Port", code: "SAKAC", country: "Saudi Arabia", region: "Middle East", status: "beta" },
+  { name: "Hamad", code: "QAHMD", country: "Qatar", region: "Middle East", status: "live" },
+  { name: "Salalah", code: "OMSLL", country: "Oman", region: "Middle East", status: "live" },
+  { name: "Sohar", code: "OMSOH", country: "Oman", region: "Middle East", status: "beta" },
+  { name: "Duqm", code: "OMDUQ", country: "Oman", region: "Middle East", status: "beta" },
+  { name: "Shuwaikh", code: "KWSWK", country: "Kuwait", region: "Middle East", status: "beta" },
 
-  { unlocode: "ESBCN", name: "Barcelona", country: "ES", region: "Europe", role: "G" },
-  { unlocode: "PLGDN", name: "Gdańsk", country: "PL", region: "Europe", role: "G" },
-  { unlocode: "SEGOT", name: "Gothenburg", country: "SE", region: "Europe", role: "G" },
-  { unlocode: "SIKOP", name: "Koper", country: "SI", region: "Europe", role: "H" },
+  /* ------------------------------ LATAM (12) ------------------------------ */
+  { name: "Santos", code: "BRSSZ", country: "Brazil", region: "LATAM", status: "live" },
+  { name: "Paranaguá", code: "BRPNG", country: "Brazil", region: "LATAM", status: "beta" },
+  { name: "Montevideo", code: "UYMVD", country: "Uruguay", region: "LATAM", status: "live" },
+  { name: "Buenos Aires", code: "ARBUE", country: "Argentina", region: "LATAM", status: "live" },
+  { name: "Callao", code: "PECLL", country: "Peru", region: "LATAM", status: "live" },
+  { name: "Guayaquil", code: "ECGYE", country: "Ecuador", region: "LATAM", status: "live" },
+  { name: "San Antonio", code: "CLSAI", country: "Chile", region: "LATAM", status: "live" },
+  { name: "Valparaíso", code: "CLVAP", country: "Chile", region: "LATAM", status: "beta" },
+  { name: "Colón / MIT", code: "PAONX", country: "Panama", region: "LATAM", status: "live" },
+  { name: "Balboa", code: "PABLB", country: "Panama", region: "LATAM", status: "live" },
+  { name: "Kingston", code: "JMKIN", country: "Jamaica", region: "LATAM", status: "live" },
+  { name: "Cartagena", code: "COCTG", country: "Colombia", region: "LATAM", status: "live" },
 
-  { unlocode: "CNXMN", name: "Xiamen", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "CNTNJ", name: "Tianjin / Xingang", country: "CN", region: "APAC", role: "G" },
-
-  { unlocode: "JPTYO", name: "Tokyo", country: "JP", region: "APAC", role: "G" },
-  { unlocode: "JPYOK", name: "Yokohama", country: "JP", region: "APAC", role: "G" },
-  { unlocode: "JPNGO", name: "Nagoya", country: "JP", region: "APAC", role: "G" },
-
-  { unlocode: "VNSGN", name: "Ho Chi Minh City (Cat Lai)", country: "VN", region: "APAC", role: "G" },
-  { unlocode: "IDTPP", name: "Jakarta (Tanjung Priok)", country: "ID", region: "APAC", role: "G" },
-  { unlocode: "PHMNL", name: "Manila", country: "PH", region: "APAC", role: "G" },
-
-  { unlocode: "AEJEA", name: "Jebel Ali", country: "AE", region: "Middle East", role: "H" },
-  { unlocode: "OMSLL", name: "Salalah", country: "OM", region: "Middle East", role: "H" },
-  { unlocode: "LKCMB", name: "Colombo", country: "LK", region: "APAC", role: "H" },
-
-  // --- Extras to 100 ---
-  // North America (+6)
-  { unlocode: "USMSY", name: "New Orleans", country: "US", region: "North America", role: "G" },
-  { unlocode: "USEVR", name: "Port Everglades", country: "US", region: "North America", role: "G" },
-  { unlocode: "USBOS", name: "Boston", country: "US", region: "North America", role: "G" },
-  { unlocode: "CAMTR", name: "Montreal", country: "CA", region: "North America", role: "G" },
-  { unlocode: "CAHAL", name: "Halifax", country: "CA", region: "North America", role: "G" },
-  { unlocode: "CASJB", name: "Saint John", country: "CA", region: "North America", role: "G" },
-
-  // Europe (+14)
-  { unlocode: "ITGIT", name: "Gioia Tauro", country: "IT", region: "Europe", role: "H" },
-  { unlocode: "ITTRS", name: "Trieste", country: "IT", region: "Europe", role: "H" },
-  { unlocode: "ITSPE", name: "La Spezia", country: "IT", region: "Europe", role: "G" },
-  { unlocode: "PTLEI", name: "Leixões", country: "PT", region: "Europe", role: "G" },
-  { unlocode: "FRMRS", name: "Marseille", country: "FR", region: "Europe", role: "G" },
-  { unlocode: "GBSOU", name: "Southampton", country: "GB", region: "Europe", role: "G" },
-  { unlocode: "GBTIL", name: "Tilbury", country: "GB", region: "Europe", role: "G" },
-  { unlocode: "BEZEE", name: "Zeebrugge", country: "BE", region: "Europe", role: "G" },
-  { unlocode: "PLGDY", name: "Gdynia", country: "PL", region: "Europe", role: "G" },
-  { unlocode: "LTKLP", name: "Klaipėda", country: "LT", region: "Europe", role: "G" },
-  { unlocode: "TRMER", name: "Mersin", country: "TR", region: "Europe", role: "G" },
-  { unlocode: "EETLL", name: "Tallinn", country: "EE", region: "Europe", role: "G" },
-  { unlocode: "GBLIV", name: "Liverpool", country: "GB", region: "Europe", role: "G" },
-  { unlocode: "NLAMS", name: "Amsterdam", country: "NL", region: "Europe", role: "G" },
-
-  // APAC (+12)
-  { unlocode: "CNDAL", name: "Dalian", country: "CN", region: "APAC", role: "G" },
-  { unlocode: "HKHKG", name: "Hong Kong", country: "HK", region: "APAC", role: "H" },
-  { unlocode: "TWKHH", name: "Kaohsiung", country: "TW", region: "APAC", role: "G" },
-  { unlocode: "TWKEL", name: "Keelung", country: "TW", region: "APAC", role: "G" },
-  { unlocode: "JPOSA", name: "Osaka", country: "JP", region: "APAC", role: "G" },
-  { unlocode: "JPUKB", name: "Kobe", country: "JP", region: "APAC", role: "G" },
-  { unlocode: "KRINC", name: "Incheon", country: "KR", region: "APAC", role: "G" },
-  { unlocode: "VNHPP", name: "Haiphong", country: "VN", region: "APAC", role: "G" },
-  { unlocode: "THBKK", name: "Bangkok", country: "TH", region: "APAC", role: "G" },
-  { unlocode: "MYPKG", name: "Port Klang", country: "MY", region: "APAC", role: "G" },
-  { unlocode: "IDSUB", name: "Surabaya", country: "ID", region: "APAC", role: "G" },
-  { unlocode: "INMAA", name: "Chennai", country: "IN", region: "APAC", role: "G" },
-
-  // Middle East (+5)
-  { unlocode: "AEAUH", name: "Abu Dhabi", country: "AE", region: "Middle East", role: "G" },
-  { unlocode: "OMSOH", name: "Sohar", country: "OM", region: "Middle East", role: "G" },
-  { unlocode: "SADMM", name: "Dammam", country: "SA", region: "Middle East", role: "G" },
-  { unlocode: "SAJED", name: "Jeddah", country: "SA", region: "Middle East", role: "G" },
-  { unlocode: "QADOH", name: "Doha", country: "QA", region: "Middle East", role: "G" },
-
-  // Africa (+4)
-  { unlocode: "ZADUR", name: "Durban", country: "ZA", region: "Africa", role: "G" },
-  { unlocode: "ZACPT", name: "Cape Town", country: "ZA", region: "Africa", role: "G" },
-  { unlocode: "ZANGQ", name: "Ngqura", country: "ZA", region: "Africa", role: "G" },
-  { unlocode: "MATNG", name: "Tanger-Med", country: "MA", region: "Africa", role: "H" },
-
-  // LATAM (+8)
-  { unlocode: "MXZLO", name: "Manzanillo", country: "MX", region: "LATAM", role: "G" },
-  { unlocode: "MXLZC", name: "Lázaro Cárdenas", country: "MX", region: "LATAM", role: "G" },
-  { unlocode: "MXVER", name: "Veracruz", country: "MX", region: "LATAM", role: "G" },
-  { unlocode: "PABLB", name: "Balboa", country: "PA", region: "LATAM", role: "H" },
-  { unlocode: "PAONX", name: "Colón", country: "PA", region: "LATAM", role: "H" },
-  { unlocode: "BRSSZ", name: "Santos", country: "BR", region: "LATAM", role: "G" },
-  { unlocode: "COCTG", name: "Cartagena", country: "CO", region: "LATAM", role: "H" },
-  { unlocode: "PECLL", name: "Callao", country: "PE", region: "LATAM", role: "G" },
+  /* ------------------------------ Africa (8) ------------------------------- */
+  { name: "Abidjan", code: "CIABJ", country: "Côte d’Ivoire", region: "Africa", status: "live" },
+  { name: "Cape Town", code: "ZACPT", country: "South Africa", region: "Africa", status: "live" },
+  { name: "Durban", code: "ZADUR", country: "South Africa", region: "Africa", status: "live" },
+  { name: "Mombasa", code: "KEMBA", country: "Kenya", region: "Africa", status: "live" },
+  { name: "Dar es Salaam", code: "TZDAR", country: "Tanzania", region: "Africa", status: "live" },
+  { name: "Djibouti", code: "DJJIB", country: "Djibouti", region: "Africa", status: "live" },
+  { name: "Lagos (Apapa/Tin Can)", code: "NGLAG", country: "Nigeria", region: "Africa", status: "live" },
+  { name: "Tema", code: "GHTEM", country: "Ghana", region: "Africa", status: "live" },
 ];
+
+export default PORTS100;

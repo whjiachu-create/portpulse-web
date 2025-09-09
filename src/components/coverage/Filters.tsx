@@ -1,3 +1,4 @@
+// src/components/coverage/Filters.tsx
 "use client";
 import { useId } from "react";
 import type { Bucket, Region, Role } from "@/data/ports.m1";
@@ -32,7 +33,7 @@ export function FiltersBar({
 }) {
   const sid = useId();
 
-  const toggle = <T extends string>(set: Set<T>, key: T) => {
+  const toggle = <T extends string,>(set: Set<T>, key: T) => {
     const next = new Set(set);
     next.has(key) ? next.delete(key) : next.add(key);
     return next;

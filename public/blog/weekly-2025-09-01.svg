@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#EAF2FF"/>
+      <stop offset="1" stop-color="#FFFFFF"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <text x="40" y="60" font-family="system-ui, -apple-system, Segoe UI, Roboto" font-size="28" fill="#0B2740">
+    14-day avg waiting hours — USLAX / USNYC / SGSIN
+  </text>
+  <!-- axes -->
+  <g transform="translate(80,100)">
+    <rect x="0" y="0" width="1040" height="460" rx="12" fill="#F6F8FB" stroke="#E2E8F0"/>
+    <!-- y ticks -->
+    <g fill="#64748B" font-size="12">
+      <text x="-40" y="420">10</text>
+      <text x="-40" y="340">14</text>
+      <text x="-40" y="260">18</text>
+      <text x="-40" y="180">22</text>
+      <text x="-40" y="100">26</text>
+    </g>
+    <!-- sample polylines (roughly scaled) -->
+    <polyline fill="none" stroke="#0B2740" stroke-width="3"
+      points="0,260 170,250 340,230 510,220 680,210 850,200 1040,190"/>
+    <polyline fill="none" stroke="#2563eb" stroke-width="3"
+      points="0,300 170,300 340,310 510,310 680,320 850,320 1040,310"/>
+    <polyline fill="none" stroke="#059669" stroke-width="3"
+      points="0,360 170,350 340,360 510,360 680,350 850,360 1040,370"/>
+    <!-- legend -->
+    <g font-size="14" fill="#0B2740">
+      <circle cx="40" cy="440" r="5" fill="#0B2740"/><text x="55" y="445">USLAX</text>
+      <circle cx="140" cy="440" r="5" fill="#2563eb"/><text x="155" y="445">USNYC</text>
+      <circle cx="240" cy="440" r="5" fill="#059669"/><text x="255" y="445">SGSIN</text>
+    </g>
+  </g>
+</svg>

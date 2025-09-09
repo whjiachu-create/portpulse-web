@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630">
+  <rect width="1200" height="630" fill="#FFFFFF"/>
+  <text x="40" y="60" font-family="system-ui, -apple-system" font-size="28" fill="#0B2740">
+    +12 ports onboarded — by region
+  </text>
+  <g transform="translate(120,120)">
+    <rect x="0" y="0" width="960" height="420" rx="12" fill="#F6F8FB" stroke="#E2E8F0"/>
+    <g font-family="system-ui, -apple-system" font-size="14" fill="#0B2740">
+      <rect x="120" y="220" width="160" height="180" fill="#0B2740"/><text x="170" y="414" fill="#475569">NA 4</text>
+      <rect x="420" y="260" width="160" height="140" fill="#2563eb"/><text x="470" y="414" fill="#475569">EU 3</text>
+      <rect x="720" y="180" width="160" height="220" fill="#059669"/><text x="770" y="414" fill="#475569">APAC 5</text>
+    </g>
+  </g>
+</svg>

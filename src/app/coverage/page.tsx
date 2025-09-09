@@ -1,27 +1,38 @@
+// src/app/coverage/page.tsx
+export const dynamic = "force-static";
+
+import { Suspense } from "react";
+import CoverageClient from "./CoverageClient";
 import type { Metadata } from "next";
-import CoverageTable from "@/components/coverage/CoverageTable";
+import { buildCanonical } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Coverage — PortPulse",
-  description: "Full list of covered ports with search and filters.",
-};
+type Q = { port?: string; q?: string; region?: string };
 
-export default async function CoveragePage({
-  searchParams,
-}: {
-  // Next 15: searchParams 是 async iterable，需要 await 再取属性
-  searchParams: Promise<{ port?: string }>;
-}) {
-  const { port } = await searchParams;
-  const initial = (port ?? "").toUpperCase().trim();
+// ✅ 统一 canonical；带任何查询参数时 noindex（但 follow）
+export async function generateMetadata(
+  { searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }
+): Promise<Metadata> {
+  const sp = await searchParams;
+  const hasAnyParams = Object.keys(sp || {}).length > 0;
+
+  return {
+    title: "Coverage — PortPulse",
+    description: "100 live ports with standardized, comparable metrics. Filter by region or search UN/LOCODE.",
+    alternates: { canonical: buildCanonical("/coverage") },
+    robots: hasAnyParams ? { index: false, follow: true } : undefined,
+  };
+}
+
+export default async function CoveragePage({ searchParams }: { searchParams: Promise<Q> }) {
+  const { port = "", q = "", region = "" } = await searchParams;
 
   return (
-    <main className="container mx-auto px-4 py-10">
-      <h1 className="text-xl font-semibold">Coverage</h1>
-      <p className="text-black/60 text-sm">Deep-link from map with <code>?port=USLAX</code>.</p>
-      <div className="mt-4">
-        <CoverageTable initialPort={initial} />
-      </div>
-    </main>
+    <Suspense>
+      <CoverageClient
+        initialPort={(port || "").toUpperCase().trim()}
+        initialQ={q || ""}
+        initialRegion={region || ""}
+      />
+    </Suspense>
   );
 }
