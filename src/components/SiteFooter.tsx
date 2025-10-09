@@ -21,7 +21,8 @@ export default function SiteFooter() {
           ["Blog", "/blog"],
           ["FAQ", "/faq"],
           ["Security", "/security"],
-          ["Status", "https://status.useportpulse.com"],
+          // 临时使用 UptimeRobot 公布页；未来可改回 https://status.useportpulse.com
+          ["Status", "https://stats.uptimerobot.com/PLya98iSza"],
         ]} />
 
         <FooterCol title="Company" items={[
