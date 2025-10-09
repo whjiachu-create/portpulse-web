@@ -10,6 +10,9 @@ type Tier = {
 };
 
 export default function PricingTable() {
+  // Beta 免费公测开关（前端环境变量）
+  const betaFree = process.env.NEXT_PUBLIC_BETA_FREE === "1";
+
   const tiers: Tier[] = [
     {
       name: "Lite",
@@ -20,7 +23,9 @@ export default function PricingTable() {
         "Hourly freshness targets",
         "Email support (best-effort)",
       ],
-      cta: { href: "/contact?intent=start-lite", label: "Start Lite" },
+      cta: betaFree
+        ? { href: "/contact?intent=request-key", label: "Request Beta Key" }
+        : { href: "/contact?intent=start-lite", label: "Start Lite" },
     },
     {
       name: "Starter",
@@ -31,7 +36,9 @@ export default function PricingTable() {
         "Cache-friendly endpoints (ETag/304)",
         "Slack/Email weekly summaries",
       ],
-      cta: { href: "/pricing#contact", label: "Start evaluation" },
+      cta: betaFree
+        ? { href: "/contact?intent=request-key", label: "Request Beta Key" }
+        : { href: "/pricing#contact", label: "Start evaluation" },
       highlight: true,
     },
     {
@@ -43,20 +50,22 @@ export default function PricingTable() {
         "Alerts & webhooks included",
         "Extended history & index deltas",
       ],
-      cta: { href: "/contact?intent=start-pro", label: "Talk to sales" },
+      cta: betaFree
+        ? { href: "/contact?intent=request-key", label: "Request Beta Key" }
+        : { href: "/contact?intent=start-pro", label: "Talk to sales" },
     },
   ];
 
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {tiers.map((t) => (
-        <Card key={t.name} tier={t} />
+        <Card key={t.name} tier={t} betaFree={betaFree} />
       ))}
     </div>
   );
 }
 
-function Card({ tier }: { tier: Tier }) {
+function Card({ tier, betaFree }: { tier: Tier; betaFree: boolean }) {
   return (
     <div
       className={
@@ -84,8 +93,15 @@ function Card({ tier }: { tier: Tier }) {
         ))}
       </ul>
 
-      {/* CTA：Lite/Starter 走 Checkout；Pro 保持“Talk to sales”跳转 */}
-      {tier.name === "Lite" ? (
+      {/* CTA 按钮逻辑：Lite/Starter 使用 Checkout；Beta 模式下改为邮件申请 */}
+      {betaFree ? (
+        <a
+          href={tier.cta.href}
+          className="mt-5 inline-block rounded-xl bg-[#0B2740] text-white px-4 py-2 text-sm hover:opacity-90"
+        >
+          {tier.cta.label}
+        </a>
+      ) : tier.name === "Lite" ? (
         <CheckoutButton priceEnvVar="PRICE_LITE_MONTH" label={tier.cta.label} />
       ) : tier.name === "Starter" ? (
         <CheckoutButton priceEnvVar="PRICE_STARTER_MONTH" label={tier.cta.label} />
@@ -98,7 +114,16 @@ function Card({ tier }: { tier: Tier }) {
         </a>
       )}
 
-      <div className="mt-3 text-xs text-black/50">Yearly: pay 10 months, get 12.</div>
+      {/* 附加说明 */}
+      {betaFree ? (
+        <div className="mt-3 text-xs text-[#0B2740]/70">
+          💬 Public Beta: temporarily free by invite — request your key →
+        </div>
+      ) : (
+        <div className="mt-3 text-xs text-black/50">
+          Yearly: pay 10 months, get 12.
+        </div>
+      )}
     </div>
   );
 }
