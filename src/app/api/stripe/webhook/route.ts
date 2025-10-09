@@ -15,13 +15,11 @@ function badConfig(which: string) {
   console.warn(`[webhook] missing env: ${which}`);
 }
 
-// 运行时检查
 if (!STRIPE_SECRET) badConfig("STRIPE_SECRET_KEY");
 if (!WEBHOOK_SECRET) badConfig("STRIPE_WEBHOOK_SECRET");
 
-const stripe = STRIPE_SECRET
-  ? new Stripe(STRIPE_SECRET, { apiVersion: "2024-06-20" })
-  : null;
+// 不指定 apiVersion，避免本地/云端 typings 不一致导致 TS 报错
+const stripe = STRIPE_SECRET ? new Stripe(STRIPE_SECRET) : null;
 
 // —— 简单 API Key 生成器（演示用；正式环境请存库并做幂等防重） —— //
 function issueApiKey(prefix: "pp_test" | "pp_live" = "pp_test") {
@@ -67,27 +65,22 @@ async function sendWelcomeEmail(to: string, key: string) {
 
 export async function POST(req: NextRequest) {
   if (!stripe || !WEBHOOK_SECRET) {
-    return NextResponse.json(
-      { ok: false, error: "misconfigured" },
-      { status: 500 }
-    );
+    return NextResponse.json({ ok: false, error: "misconfigured" }, { status: 500 });
   }
 
   // 取原始字节体，避免编码导致验签失败
-  const sig = req.headers.get("stripe-signature") || "";
+  const sig = req.headers.get("stripe-signature") ?? "";
   if (!sig) {
-    return NextResponse.json(
-      { ok: false, error: "missing stripe-signature" },
-      { status: 400 }
-    );
+    return NextResponse.json({ ok: false, error: "missing stripe-signature" }, { status: 400 });
   }
 
   let event: Stripe.Event;
   try {
     const raw = Buffer.from(await req.arrayBuffer());
     event = stripe.webhooks.constructEvent(raw, sig, WEBHOOK_SECRET);
-  } catch (err: any) {
-    console.error("[webhook] bad signature:", err?.message);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[webhook] bad signature:", msg);
     return NextResponse.json(
       { ok: false, error: "signature_verification_failed" },
       { status: 400 }
@@ -98,13 +91,10 @@ export async function POST(req: NextRequest) {
     switch (event.type) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
-
-        // 取邮箱：优先 session.customer_details.email，其次 session.customer_email
         const email =
           session.customer_details?.email ||
           (session.customer_email as string) ||
           "";
-
         const livemode = !!event.livemode;
         const key = issueApiKey(livemode ? "pp_live" : "pp_test");
 
@@ -116,13 +106,10 @@ export async function POST(req: NextRequest) {
           livemode,
         });
 
-        // 发送欢迎邮件（未配置 RESEND_API_KEY 时为 dry-run）
         if (email) await sendWelcomeEmail(email, key);
-
         break;
       }
 
-      // 可按需扩展：订阅生命周期类事件
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
@@ -131,13 +118,13 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        // 其它事件直接 ACK，避免重试风暴
         break;
     }
 
     return NextResponse.json({ ok: true, id: event.id });
-  } catch (err: any) {
-    console.error("[webhook] handler error:", err?.message || err);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[webhook] handler error:", msg);
     return NextResponse.json(
       { ok: false, error: "handler_error", id: event.id },
       { status: 500 }
