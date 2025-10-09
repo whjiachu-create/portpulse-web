@@ -153,4 +153,18 @@ a[data-cta="start-free"] > i:first-child { display: none !important; }
 
 /* fix-start-free-pseudo: kill leftover pseudo bubble on header CTA */
 [data-cta="start-free"]::before,
-[data-cta="start-free"]::after { content: none !important; display: none !important; }
+[data-cta="start-free"]::after { content: none !重要; display: none !important; }
+
+/* =========================
+   下面为本次 docs 滚动稳定性的补充
+   ========================= */
+
+/* 让 100vh 参照物稳定可用 */
+html, body {
+  height: 100%;
+}
+
+/* 给 /docs/api 的滚动容器一点保护，避免外层滚动劫持导致“顶跳” */
+#api-docs-wrapper {
+  overscroll-behavior: contain;
+}
