@@ -1,3 +1,4 @@
+// src/app/api/checkout/route.ts
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
 
@@ -9,10 +10,8 @@ const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY as string | undefined;
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 /** 仅当你已经在 Stripe 后台填写了 TOS/Privacy URL 时，再把这个开关设为 "1" */
 const REQUIRE_TOS = process.env.STRIPE_REQUIRE_TOS === "1";
-/** Checkout 语言（默认强制英文；若想自动识别，可把环境变量设为 auto） */
-const CHECKOUT_LOCALE =
-  (process.env.NEXT_PUBLIC_CHECKOUT_LOCALE || "en") as
-    Stripe.Checkout.SessionCreateParams.Locale;
+/** Beta 开关（后端） */
+const BETA_FREE = process.env.BETA_FREE === "1";
 
 if (!STRIPE_SECRET) console.warn("[checkout] STRIPE_SECRET_KEY is not set");
 if (!SITE_URL) console.warn("[checkout] NEXT_PUBLIC_SITE_URL is not set");
@@ -32,6 +31,12 @@ export async function OPTIONS() {
 type ReqBody = { priceId?: string; email?: string; intent?: string };
 
 export async function POST(req: Request) {
+  // Beta 期间：直接跳过 Stripe，返回成功页（不收费）
+  if (BETA_FREE) {
+    const url = `${SITE_URL}/success?beta=1`;
+    return NextResponse.json({ ok: true, url }, { headers: { "Cache-Control": "no-store" } });
+  }
+
   if (!STRIPE_SECRET || !SITE_URL) {
     return NextResponse.json(
       { ok: false, code: "misconfigured", message: "Server is not configured for checkout." },
@@ -39,7 +44,7 @@ export async function POST(req: Request) {
     );
   }
 
-  // 运行时构造（不指定 apiVersion，避免类型不匹配）
+  // 不指定 apiVersion，避免类型不匹配
   const stripe = new Stripe(STRIPE_SECRET);
 
   let body: ReqBody = {};
@@ -64,7 +69,6 @@ export async function POST(req: Request) {
   }
 
   try {
-    // —— 严格类型参数 —— //
     const metadata: Record<string, string> = { plan_price: priceId };
     if (intent) metadata.intent = intent;
 
@@ -79,8 +83,9 @@ export async function POST(req: Request) {
         trial_period_days: 14,
         metadata,
       },
-      // 语言：默认强制英文；如需自动或其他语言，设置 NEXT_PUBLIC_CHECKOUT_LOCALE
-      locale: CHECKOUT_LOCALE,
+      // 强制英文界面（如果你以后想自动按用户语言，可改为 'auto'）
+      locale: "en",
+
       ...(email ? { customer_email: email } : {}),
       ...(intent ? { client_reference_id: intent } : {}),
       ...(REQUIRE_TOS ? { consent_collection: { terms_of_service: "required" as const } } : {}),

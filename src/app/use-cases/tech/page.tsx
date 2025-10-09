@@ -78,7 +78,7 @@ export default function PlatformsIntegratorsPage() {
           </p>
           <div className="mt-4 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
             <pre className="p-3">{`curl -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/USLAX/trend?window=30d&fields=date,avg_wait_hours,congestion_score"`}</pre>
+"https://api.useportpulse.com/v1/ports/USLAX/trend?days=30&fields=date,avg_wait_hours,congestion_score"`}</pre>
           </div>
           <p className="text-xs text-black/60 mt-2">
             JSON and CSV return the same definitions. CSV ships strong ETag for conditional GETs (304).

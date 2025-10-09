@@ -80,7 +80,7 @@ export default function FreightForwardersPage() {
           </p>
           <div className="mt-4 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
             <pre className="p-3">{`curl -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/CNSZX/trend?window=30d&fields=date,avg_wait_hours,congestion_score"`}</pre>
+"https://api.useportpulse.com/v1/ports/CNSZX/trend?days=30&fields=date,avg_wait_hours,congestion_score"`}</pre>
           </div>
           <p className="text-xs text-black/60 mt-2">
             Use the same fields for every port. Add a single cross-port threshold (e.g., <code>congestion_score ≥ 0.65</code>)
@@ -173,7 +173,7 @@ export default function FreightForwardersPage() {
         </p>
         <div className="mt-3 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
           <pre className="p-3">{`curl -s -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/NLRTM/trend?window=30d&fields=date,avg_wait_hours,congestion_score" | jq '.'
+"https://api.useportpulse.com/v1/ports/NLRTM/trend?days=30&fields=date,avg_wait_hours,congestion_score" | jq '.'
 
 // Combine with BEANR/FRLEH, compute:
 // risk = 0.6 * p95(avg_wait_hours) + 0.4 * max(congestion_score)

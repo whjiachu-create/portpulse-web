@@ -76,7 +76,7 @@ export default function MacroQuantPage() {
           </p>
           <div className="mt-4 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
             <pre className="p-3">{`curl -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/SGSIN/trend?window=180d&fields=date,avg_wait_hours,congestion_score"`}</pre>
+"https://api.useportpulse.com/v1/ports/SGSIN/trend?days=180&fields=date,avg_wait_hours,congestion_score"`}</pre>
           </div>
           <p className="text-xs text-black/60 mt-2">
             Replay windows + timestamps → stable research &amp; live parity. Use ETags for efficient re-pulls.
@@ -164,7 +164,7 @@ export default function MacroQuantPage() {
         </p>
         <div className="mt-3 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
           <pre className="p-3">{`curl -s -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/NLRTM/trend?window=90d&fields=date,avg_wait_hours,congestion_score" | jq '.'
+"https://api.useportpulse.com/v1/ports/NLRTM/trend?days=90&fields=date,avg_wait_hours,congestion_score" | jq '.'
 
 // momentum = 0.6 * zscore(avg_wait_hours, 45d) + 0.4 * max(congestion_score_last_7d)`}</pre>
         </div>
