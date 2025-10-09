@@ -57,7 +57,7 @@ export default function MomentumProduct() {
         </Card>
         <Card title="Quickstart">
           <pre className="text-xs bg-[#F7FBFF] p-3 rounded-xl overflow-x-auto">{`curl -H "x-api-key: $API_KEY" \\
-"https://api.useportpulse.com/v1/ports/SGSIN/momentum?window=30"`}</pre>
+"https://api.useportpulse.com/v1/ports/SGSIN/momentum?days=30"`}</pre>
           <a href="/docs/api" className="inline-block mt-2 text-sm underline text-[#0B2740]">Open API docs</a>
         </Card>
       </section>

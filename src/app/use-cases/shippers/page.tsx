@@ -77,7 +77,7 @@ export default function ShippersManufacturersPage() {
           </p>
           <div className="mt-4 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
             <pre className="p-3">{`curl -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/USNYC/trend?window=30d&fields=date,avg_wait_hours,congestion_score"`}</pre>
+"https://api.useportpulse.com/v1/ports/USNYC/trend?days=30&fields=date,avg_wait_hours,congestion_score"`}</pre>
           </div>
           <p className="text-xs text-black/60 mt-2">
             The same fields for every port → one rulebook for buffers and exceptions across regions.
@@ -165,7 +165,7 @@ export default function ShippersManufacturersPage() {
         <p className="text-sm mt-2">Blend absolute hours and normalized score for a weekly buffer suggestion.</p>
         <div className="mt-3 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-auto">
           <pre className="p-3">{`curl -s -H "X-API-Key: DEMO_KEY" \\
-"https://api.useportpulse.com/v1/ports/USNYC/trend?window=30d&fields=date,avg_wait_hours,congestion_score" | jq '.'
+"https://api.useportpulse.com/v1/ports/USNYC/trend?days=30&fields=date,avg_wait_hours,congestion_score" | jq '.'
 
 // buffer_days = (p95(avg_wait_hours) > 20 ? 1 : 0) + (max(congestion_score) >= 0.7 ? 1 : 0)`}</pre>
         </div>
