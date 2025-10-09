@@ -9,6 +9,10 @@ const STRIPE_SECRET = process.env.STRIPE_SECRET_KEY as string | undefined;
 const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").replace(/\/$/, "");
 /** 仅当你已经在 Stripe 后台填写了 TOS/Privacy URL 时，再把这个开关设为 "1" */
 const REQUIRE_TOS = process.env.STRIPE_REQUIRE_TOS === "1";
+/** Checkout 语言（默认强制英文；若想自动识别，可把环境变量设为 auto） */
+const CHECKOUT_LOCALE =
+  (process.env.NEXT_PUBLIC_CHECKOUT_LOCALE || "en") as
+    Stripe.Checkout.SessionCreateParams.Locale;
 
 if (!STRIPE_SECRET) console.warn("[checkout] STRIPE_SECRET_KEY is not set");
 if (!SITE_URL) console.warn("[checkout] NEXT_PUBLIC_SITE_URL is not set");
@@ -75,6 +79,8 @@ export async function POST(req: Request) {
         trial_period_days: 14,
         metadata,
       },
+      // 语言：默认强制英文；如需自动或其他语言，设置 NEXT_PUBLIC_CHECKOUT_LOCALE
+      locale: CHECKOUT_LOCALE,
       ...(email ? { customer_email: email } : {}),
       ...(intent ? { client_reference_id: intent } : {}),
       ...(REQUIRE_TOS ? { consent_collection: { terms_of_service: "required" as const } } : {}),
