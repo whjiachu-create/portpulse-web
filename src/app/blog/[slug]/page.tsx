@@ -1,24 +1,28 @@
 // src/app/blog/[slug]/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPost } from "@/blog/posts";
-import { buildCanonical, hasTrackingParams } from "@/lib/seo";
 import type { ReactNode } from "react";
+
+import { getPost, posts } from "@/blog/posts";
+import { buildCanonical, hasTrackingParams } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
-// 统一的 metadata（仅此一处；不要再导出 metadata 常量）
-export async function generateMetadata(
-  {
-    params,
-    searchParams,
-  }: {
-    params: Promise<{ slug: string }>;
-    searchParams: Promise<Record<string, string | string[] | undefined>>;
-  }
-): Promise<Metadata> {
-  const { slug } = await params;
-  const sp = await searchParams;
+/** 生成静态路径，避免未命中时服务端抛 500（直接 404） */
+export async function generateStaticParams() {
+  return posts.map((p) => ({ slug: p.slug }));
+}
+
+/** 统一的 metadata（保留你的 SEO 工具与 canonical 逻辑） */
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams: Record<string, string | string[] | undefined>;
+}): Promise<Metadata> {
+  const { slug } = params;
+  const sp = searchParams ?? {};
   const p = getPost(slug);
   if (!p) return {};
 
@@ -48,9 +52,9 @@ export async function generateMetadata(
   };
 }
 
-// 你的 markdown-lite 渲染（保持不变，仅把 JSX.Element 改为 ReactNode）
+/** 你的 markdown-lite 渲染（保持不变，仅确保类型为 ReactNode[]） */
 function renderBlocks(md: string) {
-  const lines = md.split("\n");
+  const lines = (md ?? "").split("\n");
   const blocks: ReactNode[] = [];
   let listBuf: string[] = [];
 
@@ -107,11 +111,9 @@ function renderBlocks(md: string) {
   return blocks;
 }
 
-// 页面组件（含 Article JSON-LD）
-export default async function BlogPost(
-  { params }: { params: Promise<{ slug: string }> }
-) {
-  const { slug } = await params;
+/** 页面组件（含 Article JSON-LD），找不到即 notFound() → 404 而非 500 */
+export default function BlogPost({ params }: { params: { slug: string } }) {
+  const { slug } = params;
   const p = getPost(slug);
   if (!p) return notFound();
 
